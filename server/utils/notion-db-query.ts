@@ -24,9 +24,17 @@ class Notion {
       auth: NOTION_API_KEY,
     })
   }
+
+  get _client() {
+    return this.client
+  }
 }
 
-export class NotionQuery extends Notion {
+interface Details extends Notion {
+  _client: Client
+}
+
+export class NotionQuery extends Notion implements Details {
   public options: Object
 
   constructor(NOTION_API_KEY: string) {
@@ -54,7 +62,7 @@ export class NotionQuery extends Notion {
 
   query(database_id: string, options?: {}): Promise<QueryDatabaseResponse> {
     try {
-      return this.client.databases.query({ database_id, ...(options || this.options) })
+      return this._client.databases.query({ database_id, ...(options || this.options) })
     }
     catch (error) {
       console.error('error: ', error)
