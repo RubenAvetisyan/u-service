@@ -1,19 +1,25 @@
 <script setup>
 /* eslint-disable no-console */
 const links = useNavigationLinks()
-const { pending, data } = useLazyAsyncData('links', () => $fetch('/api/notion'))
+const fpCover = useFpCover()
+const { pending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
+  body: {
+    fp: true,
+  },
+}))
 // const { data } = await useFetch('/api/notion')
 
-onMounted(() => {
-  links.value = data?.value?.links.map((link) => {
+if (data && data.value) {
+  console.log('data.valu: ', data.valu)
+  fpCover.value = data.value.cover
+  links.value = data.value.links.map((link) => {
     const name = link.name.split(' ')
     return {
       ...link,
       splitedName: name,
     }
   }) || []
-  // console.log('links: ', links.value)
-})
+}
 </script>
 
 <template>
