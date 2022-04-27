@@ -10,11 +10,14 @@ const links = useNavigationLinks()
 
 const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
 
+const svRef = ref([])
 const sv = await $fetch('/api/services', {
   body: {
     services,
   },
 })
+
+sv.forEach(s => svRef.value.push(s))
 
 const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
 </script>
@@ -48,7 +51,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           :id="`content-${i}`"
           :class="`snap-start h-screen w-[calc(100vw-17px)] ${item} flex text-center items-center justify-center`"
         >
-          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{sv.length ? sv[i].name : 'some name'+i}}</span>
+          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{svRef.length ? svRef[i].name : 'some name'+i}}</span>
         </div>
       </div>
     </div>

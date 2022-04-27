@@ -11,14 +11,13 @@ definePageMeta({
 
 const findImgUrl = (match) => {
   const res = links.value.find(({ path }) => {
-    console.log('path: ', path, path.includes(match))
     return path.includes(match)
   })
 
-  return res?.imgUrl
+  return res?.imgUrl || ''
 }
 
-let imgUrl = ref('')
+const imgUrl = ref('')
 const model = route?.params?.model[0]?.replace(/[-\s]/g, ' ') || ''
 console.log('model: ', model)
 
@@ -30,12 +29,12 @@ computed({
   },
 })
 
-imgUrl = findImgUrl(route?.params?.model[0])
+imgUrl.value = findImgUrl(route?.params?.model[0])
 console.log('imgUrl: ', imgUrl)
 
 useMeta({
   title: model.toLocaleUpperCase(),
-  style: { type: 'text/css', children: `#__nuxt > div {background-image: url('${imgUrl}');}` },
+  style: { type: 'text/css', children: `#__nuxt > div {background-image: url('${imgUrl.value}');}` },
 })
 
 </script>
@@ -47,7 +46,7 @@ useMeta({
 </template>
 
 <style>
-#__nuxt > div {
+#__nuxt>div {
   background-color: #fff;
 }
 </style>
