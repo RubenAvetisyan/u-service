@@ -11,13 +11,14 @@ const links = useNavigationLinks()
 const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
 
 const svRef = ref([])
-const sv = await $fetch('/api/services', {
+const { data } = await useFetch('/api/services', {
   body: {
     services,
   },
 })
+console.log('data: ', data)
 
-sv.forEach(s => svRef.value.push(s))
+data.value.forEach(s => svRef.value.push(s))
 
 const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
 </script>

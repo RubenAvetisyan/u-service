@@ -30,7 +30,6 @@ computed({
 })
 
 imgUrl.value = findImgUrl(route?.params?.model[0])
-console.log('imgUrl: ', imgUrl)
 
 useMeta({
   title: model.toLocaleUpperCase(),
