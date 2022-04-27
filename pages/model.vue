@@ -48,7 +48,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           :id="`content-${i}`"
           :class="`snap-start h-screen w-[calc(100vw-17px)] ${item} flex text-center items-center justify-center`"
         >
-          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{sv[i].name}}</span>
+          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{sv.length ? sv[i].name : 'some name'+i}}</span>
         </div>
       </div>
     </div>
