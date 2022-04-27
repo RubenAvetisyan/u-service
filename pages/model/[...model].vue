@@ -9,7 +9,6 @@ definePageMeta({
   key: route => route.fullPath,
 })
 
-console.log('links.value: ', links.value)
 const findImgUrl = (match) => {
   const res = links.value.find(({ path }) => {
     console.log('path: ', path, path.includes(match))
