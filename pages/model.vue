@@ -9,7 +9,12 @@ definePageMeta({
 const links = useNavigationLinks()
 
 const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
-console.log('services: ', services)
+
+const sv = await $fetch('/api/services', {
+  body: {
+    services,
+  },
+})
 
 const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
 </script>
@@ -21,8 +26,8 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
         <NuxtPage class="w-full mx-auto justify-center items-center" />
 
         <h2 class="font-light tracking-wider text-[#5c5d61] text-3.5 pb-2">
-          Order Online for
-          <content-anim-link>Touchless Delivery</content-anim-link>
+          Պատվիրել Online՝
+          <content-anim-link>Անհպում մատակարարում</content-anim-link>
         </h2>
       </div>
       <div
@@ -43,7 +48,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           :id="`content-${i}`"
           :class="`snap-start h-screen w-[calc(100vw-17px)] ${item} flex text-center items-center justify-center`"
         >
-          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">Ruben</span>
+          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{sv[i].name}}</span>
         </div>
       </div>
     </div>

@@ -67,16 +67,16 @@ export async function query(client, database_id, options?) {
 export async function getLinksFromResults(results) {
   const links: Link[] = []
   for (let i = 0; i < getLength(results); i++) {
-    const { id, archived, properties, url, cover }: any = results[i]
+    const { id, archived, properties, url = '', cover }: any = results[i]
 
     if (archived) continue
 
-    const services = properties.services?.relation
+    const services = properties.services?.relation || []
 
     links.push({
       id,
       name: properties.Name.title[0].text.content,
-      path: properties.path.url,
+      path: properties?.path?.url,
       imgUrl: cover?.external?.url || cover?.file?.url,
       services,
       url,

@@ -21,12 +21,12 @@ const scrollDown = (selector) => {
 </script>
 
 <template>
-  <div class="h-[87vh] justify-between w-full flex overflow-hidden items-center mt-[13vh]">
-    <div class="snap-start h-full w-full items-center absolute">
+  <div class="h-[87vh] justify-between w-full flex x-overflow-hidden items-center mt-[13vh]">
+    <div class="snap-start h-full w-full items-center">
       <div class="text-center">
-        <content-model model="Ծառայությունների Ցանկ"></content-model>
+        <content-model model="Ծառայությունների Ցանկ" :light="$device.isMobile"></content-model>
 
-        <h2 class="font-light tracking-wider text-[#5c5d61] text-3.5 pb-2">
+        <h2 class="font-light tracking-wider text-black text-3.5 pb-2">
           Պատվիրել Online՝
           <content-anim-link>Անհպում մատակարարում</content-anim-link>
         </h2>

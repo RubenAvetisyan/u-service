@@ -10,7 +10,6 @@ const { pending, data } = await useLazyAsyncData('links', () => $fetch('/api/not
 // const { data } = await useFetch('/api/notion')
 
 if (data && data.value) {
-  console.log('data.valu: ', data.valu)
   fpCover.value = data.value.cover
   links.value = data.value.links.map((link) => {
     const name = link.name.split(' ')
@@ -24,7 +23,7 @@ if (data && data.value) {
 
 <template>
   <div
-    class="flex flex-col md:items-center h-screen w-screen md:w-screen bg-current bg-center sm:bg-cover md:bg-clip-content"
+    class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover md:bg-clip-content"
   >
     <!-- sidebar -->
     <r-side-nav></r-side-nav>
@@ -49,7 +48,7 @@ if (data && data.value) {
       <slot name="header-right" />
     </header>
 
-    <main class="snap-y snap-mandatory md:overflow-scroll sm:w-screen lg:overflow-hidden h-screen">
+    <main class="w-screen h-screen">
       <slot />
     </main>
 
