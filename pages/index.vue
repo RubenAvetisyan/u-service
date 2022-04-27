@@ -1,13 +1,13 @@
 <script setup>
 /* eslint-disable no-console */
-
-const backgroundImg = ref('/3.avif')
+const fpCover = useFpCover()
+const backgroundImg = fpCover.value
 useMeta({
   title: 'Home',
   style: [
     {
       type: 'text/css',
-      children: `#__nuxt > div {background-image: url(${backgroundImg.value})}`,
+      children: `#__nuxt > div {background-image: url(${backgroundImg})}`,
     },
   ],
 })

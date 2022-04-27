@@ -12,6 +12,6 @@ const title = modelText.length === 1 ? `Service ${modelText}` : modelText
 
 <template>
   <h1
-    class="font-bold tracking-wider leading-[1.15] text-[#393c41] text-10.5 py-1 capitalize"
+    class="font-bold tracking-wider text-[2.25rem] leading-[1.15] text-[#393c41] text-10.5 py-1 capitalize mw-auto px-1"
   >{{ title }}</h1>
 </template>

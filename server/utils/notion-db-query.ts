@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Client } from '@notionhq/client'
-import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
+// import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
 
 // interface C { id: string; Name: {}; path: {}; url: string; services?: {}[] }
 
@@ -15,96 +15,90 @@ export declare interface Link {
   imgUrl?: string
   services?: {}[]
   url?: string
+  cover?: string
 }
 
-class Notion {
-  readonly client: Client
+// interface Details {
+//   client: Client
+//   query<T extends object, D extends string>(database_id: D, options?: T): Promise<QueryDatabaseResponse> | null
+//   getRelatedServices<T extends [] & { id: string }[]>(relations: T): Promise<Link[][] | undefined>
+//   getLinksFromResults(results: {}[]): Promise<Link[]>
+// }
+
+export class Notion {
+  client: Client = null
+
   constructor(NOTION_API_KEY: string) {
     this.client = new Client({
       auth: NOTION_API_KEY,
+    }) || null
+  }
+}
+
+const props = {
+  filter: {
+    and: [
+      {
+        property: 'Status',
+        checkbox: {
+          equals: true,
+        },
+      },
+    ],
+  },
+  sorts: [
+    {
+      property: 'order',
+      direction: 'ascending',
+    },
+  ],
+}
+
+export async function query(client, database_id, options?) {
+  try {
+    const pots = options || props
+    return client.databases.query({ database_id, ...pots })
+  }
+  catch (error) {
+    console.error('error: ', error)
+  }
+}
+
+export async function getLinksFromResults(results) {
+  const links: Link[] = []
+  for (let i = 0; i < getLength(results); i++) {
+    const { id, archived, properties, url, cover }: any = results[i]
+
+    if (archived) continue
+
+    const services = properties.services?.relation
+
+    links.push({
+      id,
+      name: properties.Name.title[0].text.content,
+      path: properties.path.url,
+      imgUrl: cover?.external?.url || cover?.file?.url,
+      services,
+      url,
     })
   }
-
-  get _client() {
-    return this.client
-  }
+  return links
 }
 
-interface Details extends Notion {
-  _client: Client
+function getLength(arr) {
+  return arr.length
 }
 
-export class NotionQuery extends Notion implements Details {
-  public options: Object
+export async function getRelatedServices(relations) {
+  console.log('relations: ', relations[0])
+  if (!relations) return undefined
+  const results = await Promise.all(relations.map(async(relation) => {
+    const database_id = relation.id
 
-  constructor(NOTION_API_KEY: string) {
-    super(NOTION_API_KEY)
+    const database = await query(database_id, props)
 
-    this.options = {
-      filter: {
-        and: [
-          {
-            property: 'Status',
-            checkbox: {
-              equals: true,
-            },
-          },
-        ],
-      },
-      sorts: [
-        {
-          property: 'order',
-          direction: 'ascending',
-        },
-      ],
-    }
-  }
+    return getLinksFromResults(database.results)
+  }))
 
-  query(database_id: string, options?: {}): Promise<QueryDatabaseResponse> {
-    try {
-      return this._client.databases.query({ database_id, ...(options || this.options) })
-    }
-    catch (error) {
-      console.error('error: ', error)
-    }
-  }
-
-  async getRelatedServices(relations: { id: string }[]): Promise<Link[][] | undefined> {
-    console.log('relations: ', relations[0])
-    if (!relations) return undefined
-    const results = await Promise.all(relations.map(async(relation) => {
-      const database_id = relation.id
-
-      const database = await this.query(database_id, this.options)
-
-      return this.getLinksFromResults(database.results)
-    }))
-
-    return results
-  }
-
-  async getLinksFromResults(results): Promise<Link[]> {
-    const links: Link[] = []
-    for (let i = 0; i < this.getLength(results); i++) {
-      const { id, archived, properties, url, cover }: any = results[i]
-
-      if (archived) continue
-
-      const services = properties.services?.relation
-
-      links.push({
-        id,
-        name: properties.Name.title[0].text.content,
-        path: properties.path.url,
-        imgUrl: cover?.external?.url || cover?.file?.url,
-        services,
-        url,
-      })
-    }
-    return links
-  }
-
-  getLength(arr) {
-    return arr.length
-  }
+  return results
 }

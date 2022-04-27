@@ -1,13 +1,17 @@
 /* eslint-disable no-console */
-import type { ClientRequest, ServerResponse } from 'http'
+import type { IncomingMessage, ServerResponse } from 'http'
+// import { useBody } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
-import { NotionQuery } from '../utils/notion-db-query'
+import { Notion, getLinksFromResults, query } from '../utils/notion-db-query'
 
-const { query, getLinksFromResults } = new NotionQuery(process.env.NOTION_API_KEY)
+let cover = null
+
+const notion = new Notion(process.env.NOTION_API_KEY)
+// const { query, getLinksFromResults } = notion
 
 const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID
-export default async(req: ClientRequest, res: ServerResponse): Promise<{ links: Link[] }> => {
+export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: string }> => {
   const links: Link[] = []
   try {
     if (req.method === 'POST') {
@@ -16,10 +20,19 @@ export default async(req: ClientRequest, res: ServerResponse): Promise<{ links: 
       res.end()
     }
     else {
-      const { results } = await query(database_id)
+      const body = req.body
+      if (!cover && body && body.fp) {
+        const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
+        const response = await notion.client.pages.retrieve({ page_id: pageId })
+        cover = response.cover.external.url
+        console.log('cover: ', cover)
+      }
+      // notion.client.pages.retrive()
+      const { results = {} } = await query(notion.client, database_id) || {}
 
       return {
         links: await getLinksFromResults(results),
+        cover: cover || '',
       }
     }
   }
@@ -28,10 +41,11 @@ export default async(req: ClientRequest, res: ServerResponse): Promise<{ links: 
       console.log('error: ', error)
     }
     else {
+      console.log('error: ', error)
       // notionErrorHandler
       errorHandler(error)
       // eslint-disable-next-line no-undef
-      throwError('😱 Oh no, an error has been thrown.')
+      // throwError('😱 Oh no, an error has been thrown.')
     }
 
     return {
