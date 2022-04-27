@@ -6,7 +6,7 @@
   targetPort = 3000
 
 [build]
-  command = "nuxi generate"
+  command = "npm run generate"
   publish = "dist"
   functions = ".output/server"
 
