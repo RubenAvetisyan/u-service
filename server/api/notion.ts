@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { ServerResponse } from 'http'
 // import { useBody } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
@@ -23,8 +23,8 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
       const body = req.body
       if (!cover && body && body.fp) {
         const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
-        const response = await notion.client.pages.retrieve({ page_id: pageId })
-        cover = response.cover.external.url
+        const pages = await notion.client.pages.retrieve({ page_id: pageId })
+        cover = pages?.cover?.external?.url
         console.log('cover: ', cover)
       }
       // notion.client.pages.retrive()
@@ -50,6 +50,7 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
 
     return {
       links,
+      cover,
     }
   }
 }
