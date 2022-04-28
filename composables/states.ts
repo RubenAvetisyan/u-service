@@ -7,6 +7,10 @@ export const useNavigationLinks = () => {
   return useState<[]>('links', () => ([]))
 }
 
+export const useServices = () => {
+  return useState('services', () => ([]))
+}
+
 export const useFpCover = () => {
   return useState('fpCover', () => (''))
 }

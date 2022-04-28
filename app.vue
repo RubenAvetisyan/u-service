@@ -17,6 +17,7 @@ const onClick = () => {
 // const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
 
 const links = useNavigationLinks()
+const childeServices = useServices()
 
 const generateImageLink = (path, ext) => `${path}.${ext}`
 
@@ -47,6 +48,8 @@ const generatedKey = str => useGeneratedKey(str)
     </Head>
     <Link v-for="({ imgUrl, name }) in links" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload" :href="imgUrl"
       as="image" />
+    <Link v-for="({ imgUrl, name }) in childeServices" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload"
+      :href="imgUrl" as="image" />
 
     <!-- generateImageLink(imgUrl, 'avif') -->
 
@@ -56,10 +59,10 @@ const generatedKey = str => useGeneratedKey(str)
       <r-logo :width="245" class="md:mt-0"></r-logo>
     </template>
 
-    <template #nav v-if="name">
+    <!-- <template #nav v-if="name">
       <r-top-navigation v-show="$device.isDesktop" routes-prefix="/model" :routes="links" :center="true">
       </r-top-navigation>
-    </template>
+    </template> -->
 
     <template #header-right>
       <r-top-navigation v-if="$device.isDesktop" :routes="rightNavigation" :padding-r="32">

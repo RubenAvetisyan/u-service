@@ -2,25 +2,44 @@
 /* eslint-disable no-console */
 const route = useRoute()
 
-definePageMeta({
-  keepalive: true,
-})
-
 const links = useNavigationLinks()
 
 const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
+console.log('services: ', services)
 
-const svRef = ref([])
-onMounted(async() => {
-  const { data } = await useFetch('/api/services', {
-    body: {
-      services,
-    },
-  })
-  data.value.forEach(s => svRef.value.push(s))
+const childeServices = useServices()
+
+const metaLinks = ref([])
+
+definePageMeta({
+  keepalive: true,
+
 })
 
+const generatedKey = str => useGeneratedKey(str)
+const ids = services.map(({ id }) => id)
+const queryString = ids.join('&services=')
+
+const { data, error } = await useFetch(`/api/services?services=${queryString}`)
+const createBgColor = (suffix) => {
+  return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
+}
+data?.value?.forEach((s, i) => {
+  const itemClass = createBgColor(s.imgUrl || i)
+  childeServices.value.push({ ...s, itemClass })
+})
+
+if (error) console.error(error)
+// onMounted(async() => {
+//   try {
+//   }
+//   catch (error) {
+//     console.error('error: ', error)
+//   }
+// })
+
 const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
+
 </script>
 
 <template>
@@ -35,24 +54,24 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
         </h2>
       </div>
       <div
-        class="flex flex-col md:flex-row place-items-center text-center items-center justify-center md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4"
-      >
+        class="flex flex-col md:flex-row place-items-center text-center items-center justify-center md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4">
         <content-btn dark>ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
-        <content-btn >Առկա ծառայություններ</content-btn>
+        <content-btn>Առկա ծառայություններ</content-btn>
       </div>
-      <content-chevron-down
-        @click="() => scrollDown('#contents')"
-        class="mt-[50vh] md:mt-[65vh] mb-[6vh]"
-      ></content-chevron-down>
+      <content-chevron-down @click="() => scrollDown('#contents')" class="mt-[50vh] md:mt-[65vh] mb-[6vh]">
+      </content-chevron-down>
 
       <div id="contents">
-        <div
-          v-for="(item, i) in ['bg-blue-100', 'bg-blue-200', 'bg-blue-300']"
-          :key="item"
+        <div v-for="({ name, imgUrl='', itemClass }, i) in childeServices" :key="generatedKey(name)"
           :id="`content-${i}`"
-          :class="`snap-start h-screen w-[calc(100vw-17px)] ${item} flex text-center items-center justify-center`"
-        >
-          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">{{svRef.length ? svRef[i].name : 'some name'+i}}</span>
+          :style="`
+          background-image: url('${imgUrl}');
+          background-position: center;
+          background-size: cover;`"
+          :class="['snap-start h-screen w-[calc(100vw-17px)]', itemClass, 'flex text-center items-center justify-center']">
+          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
+            {{ name || `some name ${i}` }}
+          </span>
         </div>
       </div>
     </div>

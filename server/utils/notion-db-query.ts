@@ -16,6 +16,7 @@ export declare interface Link {
   services?: {}[]
   url?: string
   cover?: string
+  dbImgUrl?: [] | string
 }
 
 // interface Details {
@@ -73,11 +74,14 @@ export async function getLinksFromResults(results) {
 
     const services = properties.services?.relation || []
 
+    const dbImgUrls = properties?.img_url?.files || null
+
     links.push({
       id,
       name: properties.Name.title[0].text.content,
       path: properties?.path?.url,
       imgUrl: cover?.external?.url || cover?.file?.url,
+      dbImgUrl: dbImgUrls && dbImgUrls.length ? dbImgUrls[0].external?.url : '',
       services,
       url,
     })
