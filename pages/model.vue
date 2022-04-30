@@ -11,15 +11,11 @@ const childeServices = useServices()
 
 const metaLinks = ref([])
 
-definePageMeta({
-  keepalive: true,
-})
-
 const generatedKey = str => useGeneratedKey(str)
 const ids = services.map(({ id }) => id)
 const queryString = ids.join('&services=')
 
-const { data, error } = await useFetch(`/api/services?services=${queryString}`)
+const { data, error = null } = await useFetch(`/api/services?services=${queryString}`)
 const createBgColor = (suffix) => {
   return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
 }
@@ -28,7 +24,7 @@ data?.value?.forEach((s, i) => {
   childeServices.value.push({ ...s, itemClass })
 })
 
-if (error) console.error(error)
+// if (error) console.error(error)
 // onMounted(async() => {
 //   try {
 //   }
@@ -70,10 +66,10 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           <!-- <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
             {{ name || `some name ${i}` }}
           </span> -->
-          <div class="mx-4 bg-white opacity-70 backdrop-blur-sm">
+          <div class="mx-4 bg-white opacity-70 backdrop-blur-sm rounded-md px-2">
             <h1
               :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
-              {{ name || `some name ${i}` }}}</h1>
+              {{ name || `some name ${i}` }}</h1>
           </div>
         </div>
       </div>

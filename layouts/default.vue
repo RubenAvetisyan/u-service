@@ -1,24 +1,6 @@
 <script setup>
 /* eslint-disable no-console */
-const links = useNavigationLinks()
-const fpCover = useFpCover()
-const { pending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
-  body: {
-    fp: true,
-  },
-}))
-// const { data } = await useFetch('/api/notion')
-
-if (data && data.value) {
-  fpCover.value = data.value.cover
-  links.value = data.value.links.map((link) => {
-    const name = link.name.split(' ')
-    return {
-      ...link,
-      splitedName: name,
-    }
-  }) || []
-}
+const pending = usePending()
 </script>
 
 <template>
@@ -30,7 +12,7 @@ if (data && data.value) {
 
     <!-- header -->
     <header
-      v-if="!pending && links && links.length && ($slots.nav || $slots.logo || $slots['header-right'])"
+      v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
       class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0"
       style="min-height: 54px; min-width: 100%;"
     >

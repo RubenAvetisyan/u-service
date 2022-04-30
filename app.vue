@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 definePageMeta({
   layout: false,
+  keepalive: true,
 })
 
 const route = useRoute()
@@ -14,9 +15,31 @@ const onClick = () => {
   useSidebarToggle()
 }
 
+const pending = usePending()
+
 // const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
 
 const links = useNavigationLinks()
+const fpCover = useFpCover()
+const { pending: isPending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
+  body: {
+    fp: true,
+  },
+}))
+
+pending.value = isPending
+// const { data } = await useFetch('/api/notion')
+
+if (data && data.value) {
+  fpCover.value = data.value.cover
+  links.value = data.value.links.map((link) => {
+    const name = link.name.split(' ')
+    return {
+      ...link,
+      splitedName: name,
+    }
+  }) || []
+}
 const childeServices = useServices()
 
 const generateImageLink = (path, ext) => `${path}.${ext}`
@@ -46,9 +69,9 @@ const generatedKey = str => useGeneratedKey(str)
     <Head>
       <Meta name="description" :content="`My page's ${name} description`" />
     </Head>
-    <Link v-for="({ imgUrl, name }) in links" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload" :href="imgUrl"
+    <Link v-if="links" v-for="({ imgUrl, name }) in links" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload" :href="imgUrl"
       as="image" />
-    <Link v-for="({ imgUrl, name }) in childeServices" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload"
+    <Link v-if="childeServices" v-for="({ imgUrl, name }) in childeServices" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload"
       :href="imgUrl" as="image" />
 
     <!-- generateImageLink(imgUrl, 'avif') -->
@@ -65,7 +88,7 @@ const generatedKey = str => useGeneratedKey(str)
     </template> -->
 
     <template #header-right>
-      <r-top-navigation v-if="$device.isDesktop" :routes="rightNavigation" :padding-r="32">
+      <r-top-navigation v-if="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32">
       </r-top-navigation>
       <!-- MOBILE BUTTON -->
       <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">

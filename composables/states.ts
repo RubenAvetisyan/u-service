@@ -14,3 +14,7 @@ export const useServices = () => {
 export const useFpCover = () => {
   return useState('fpCover', () => (''))
 }
+
+export const usePending = () => {
+  return useState('pending', () => (false))
+}
