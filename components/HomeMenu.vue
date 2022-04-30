@@ -18,7 +18,7 @@ useMeta({
   name: 'HomeMenu',
 })
 
-const bgColor = props?.color?.includes('#') ? `[${props.color}]` : `bg-${props.color}`
+const bgColor = computed(() => props?.color.includes('#') ? `[${props?.color}]` : `bg-${props?.color}`)
 
 let baseUrl = ''
 
@@ -27,7 +27,7 @@ if (process.server) baseUrl = process.env.BASE_URL
 
 <template>
   <div v-if="!!path" @click.stop="$router.replace(`${baseUrl}${path ? routesPrefix : ''}${path}`)"
-    :class="[bgColor, 'group flex-wrap-reverse cursor-pointer overflow-hidden backdrop-blur-sm bg-opacity-10 relative shadow-lg ring-1 ring-black/5 items-center hover:shadow-md hover:shadow-gray-300 hover:dark:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-red-100 via-blue-500/50 to-gray-100']">
+    :class="[bgColor, 'group flex-wrap-reverse cursor-pointer overflow-hidden backdrop-blur-sm bg-opacity-15 relative shadow-lg ring-1 ring-black/5 items-center hover:shadow-md hover:shadow-gray-300 hover:dark:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-red-100 via-blue-500/50 to-gray-100']">
     <img
       class="w-6 h-6 shadow-lg rounded-full mx-auto transition duration-800 delay-75 ease-in-out group-hover:scale-125 group-hover:animate-bounce group-hover:grayscale shadow-lg shadow-red-600 group-hover:invert"
       src="/tesla-svgrepo-com.svg" />

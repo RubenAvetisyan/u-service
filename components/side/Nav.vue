@@ -15,6 +15,14 @@ const hide = () => {
 
 const links = useNavigationLinks()
 
+const { $device } = useNuxtApp()
+
+const isDesktopOrTablet = $device.isDesktop
+
+const fullSide = computed(() => {
+  return isDesktopOrTablet ? null : 'flex-1'
+})
+
 </script>
 
 <template>
@@ -23,6 +31,7 @@ const links = useNavigationLinks()
   >
     <!-- content -->
     <div
+      v-if="isDesktopOrTablet"
       id="sidebar-content"
       class="flex-1 p-10 text-2xl font-bold bg-white backdrop-blur-0 bg-opacity-0 transition duration-800 ease-in-out"
       @click.stop="hide"
@@ -30,7 +39,7 @@ const links = useNavigationLinks()
 
     <!-- sidebar -->
     <div
-      class="sidebar bg-white backdrop-blur-0 bg-opacity-0 text-blue-100 w-64 space-y-6 py-2 px-2 inset-y-0 right-0 transform translate-x-full transition duration-500 ease-in-out delay-100 z-50"
+      :class="[fullSide, 'sidebar bg-white backdrop-blur-0 bg-opacity-0 text-blue-100 w-64 space-y-6 py-2 px-2 inset-y-0 right-0 transform translate-x-full transition duration-500 ease-in-out delay-100 z-50']"
     >
       <!-- logo -->
       <div class="flex min-h-8 justify-between items-center text-blue-gray-500">
@@ -49,6 +58,7 @@ const links = useNavigationLinks()
           routes-prefix="/model"
           :path="path"
           class="block py-2 5 px-4"
+          @click.stop="hide"
         >
           <template #first-line>{{ name }}</template>
         </r-side-nav-menu>

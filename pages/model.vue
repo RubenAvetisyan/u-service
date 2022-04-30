@@ -13,7 +13,6 @@ const metaLinks = ref([])
 
 definePageMeta({
   keepalive: true,
-
 })
 
 const generatedKey = str => useGeneratedKey(str)
@@ -63,15 +62,19 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
 
       <div id="contents">
         <div v-for="({ name, imgUrl='', itemClass }, i) in childeServices" :key="generatedKey(name)"
-          :id="`content-${i}`"
-          :style="`
+          :id="`content-${i}`" :style="`
           background-image: url('${imgUrl}');
           background-position: center;
           background-size: cover;`"
-          :class="['snap-start h-screen w-[calc(100vw-17px)]', itemClass, 'flex text-center items-center justify-center']">
-          <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
+          :class="['snap-start h-screen w-screen', itemClass, 'flex text-center items-center justify-center']">
+          <!-- <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
             {{ name || `some name ${i}` }}
-          </span>
+          </span> -->
+          <div class="mx-4 bg-white opacity-70 backdrop-blur-sm">
+            <h1
+              :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
+              {{ name || `some name ${i}` }}}</h1>
+          </div>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ const rightNavigation = [
   },
   {
     path: '',
-    name: 'Ծառայությունների ցուցակ',
+    name: 'Ծառայություններ',
     onClick,
   },
 ]
@@ -69,7 +69,7 @@ const generatedKey = str => useGeneratedKey(str)
       </r-top-navigation>
       <!-- MOBILE BUTTON -->
       <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">
-        <r-link-button @click="onClick">menu</r-link-button>
+        <r-link-button @click="onClick">Ցանկ</r-link-button>
       </div>
     </template>
     <!-- END HEADER -->

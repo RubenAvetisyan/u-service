@@ -7,7 +7,7 @@ useMeta({
   style: [
     {
       type: 'text/css',
-      children: `#__nuxt > div {background-image: url(${backgroundImg})}`,
+      children: `#__nuxt>div {background-image: url(${backgroundImg}); background-position: center; background-size: cover;}`,
     },
   ],
 })
@@ -23,7 +23,7 @@ const scrollDown = (selector) => {
 <template>
   <div class="h-[87vh] justify-between w-full flex x-overflow-hidden items-center mt-[13vh]">
     <div class="snap-start h-full w-full items-center">
-      <div class="text-center">
+      <!-- <div class="text-center">
         <content-model model="Ծառայությունների Ցանկ" :light="$device.isMobile"></content-model>
 
         <h2 class="font-light tracking-wider text-black text-3.5 pb-2">
@@ -35,7 +35,7 @@ const scrollDown = (selector) => {
       <div class="flex mx-auto items-center justify-center space-x-6.25 mt-4">
         <content-btn dark>ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
         <content-btn >Առկա ծառայություններ</content-btn>
-      </div>
+      </div> -->
 
       <div class="flex flex-wrap items-center mx-auto w-full pt-15">
         <r-home-menu v-for="({ path, splitedName }) in links" :key="`service-block-${splitedName.join('-')}`"

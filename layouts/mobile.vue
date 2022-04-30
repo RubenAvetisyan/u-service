@@ -23,7 +23,7 @@ if (data && data.value) {
 
 <template>
   <div
-    class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover md:bg-clip-content"
+    class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover"
   >
     <!-- sidebar -->
     <r-side-nav></r-side-nav>
