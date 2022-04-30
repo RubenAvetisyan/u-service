@@ -4,13 +4,13 @@ const route = useRoute()
 
 const links = useNavigationLinks()
 
-const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
+const services = links.value.length ? links.value.find(({ path = '' }) => path.includes(route?.params?.model[0]))?.services : []
 
 const generatedKey = str => useGeneratedKey(str)
-const notGenerated = services.every(({ name = null }) => !name)
-console.log('notGenerated: ', notGenerated)
+const notGenerated = computed(() => services.length && services.every(({ name = null }) => !name))
+console.log('notGenerated: ', notGenerated.value)
 
-if (notGenerated) {
+if (notGenerated.value) {
   const ids = services.map(({ id }) => id)
   const queryString = ids.join('&services=')
 
@@ -65,7 +65,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
       <content-chevron-down @click="() => scrollDown('#contents')" class="mt-[50vh] md:mt-[65vh] mb-[6vh]">
       </content-chevron-down>
 
-      <div id="contents">
+      <div v-if="services.length" id="contents">
         <div v-for="({ name, imgUrl='', itemClass = '', path = '/' }, i) in services" :key="generatedKey(name)"
           :id="`content-${i}`" :style="`
           background-image: url('${imgUrl}');
