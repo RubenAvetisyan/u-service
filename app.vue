@@ -21,26 +21,43 @@ const pending = usePending()
 
 const links = useNavigationLinks()
 const fpCover = useFpCover()
-const { pending: isPending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
-  body: {
-    fp: true,
-  },
-}))
 
-pending.value = isPending
-// const { data } = await useFetch('/api/notion')
+if (!links.value.length) {
+  const { pending: isPending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
+    body: {
+      fp: true,
+    },
+  }))
 
-if (data && data.value) {
-  fpCover.value = data.value.cover
-  links.value = data.value.links.map((link) => {
-    const name = link.name.split(' ')
-    return {
-      ...link,
-      splitedName: name,
-    }
-  }) || []
+  pending.value = isPending
+  // const { data } = await useFetch('/api/notion')
+
+  if (data && data.value) {
+    fpCover.value = data.value.cover
+    links.value = data.value.links.map((link) => {
+      const name = link.name.split(' ')
+      return {
+        ...link,
+        splitedName: name,
+      }
+    }) || []
+  }
 }
-const childeServices = useServices()
+
+const linkRels = ref([])
+const linkRelPush = (imgUrl, path) => {
+  linkRels.value.push({ imgUrl, path })
+}
+
+if (links.value.length) {
+  links.value.forEach((link) => {
+    linkRelPush(link.imgUrl, link.path)
+    link.services.forEach(({ imgUrl = '', path = '' }) => {
+      if (imgUrl)
+        linkRelPush(imgUrl, path)
+    })
+  })
+}
 
 const generateImageLink = (path, ext) => `${path}.${ext}`
 
@@ -69,9 +86,7 @@ const generatedKey = str => useGeneratedKey(str)
     <Head>
       <Meta name="description" :content="`My page's ${name} description`" />
     </Head>
-    <Link v-if="links" v-for="({ imgUrl, name }) in links" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload" :href="imgUrl"
-      as="image" />
-    <Link v-if="childeServices" v-for="({ imgUrl, name }) in childeServices" :key="generatedKey(`${name}-${imgUrl}-avif`)" rel="preload"
+    <Link v-if="!!linkRels.length" v-for="({ imgUrl, path }) in linkRels" :key="generatedKey(`${path}-avif`)" rel="preload"
       :href="imgUrl" as="image" />
 
     <!-- generateImageLink(imgUrl, 'avif') -->

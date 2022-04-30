@@ -8,7 +8,7 @@ export const useNavigationLinks = () => {
 }
 
 export const useServices = () => {
-  return useState('services', () => ([]))
+  return useState('services', () => ({}))
 }
 
 export const useFpCover = () => {

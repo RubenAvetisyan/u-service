@@ -5,24 +5,33 @@ const route = useRoute()
 const links = useNavigationLinks()
 
 const services = links.value.find(({ path }) => path.includes(route?.params?.model[0]))?.services
-console.log('services: ', services)
-
-const childeServices = useServices()
-
-const metaLinks = ref([])
 
 const generatedKey = str => useGeneratedKey(str)
-const ids = services.map(({ id }) => id)
-const queryString = ids.join('&services=')
+const notGenerated = services.every(({ name = null }) => !name)
+console.log('notGenerated: ', notGenerated)
 
-const { data, error = null } = await useFetch(`/api/services?services=${queryString}`)
-const createBgColor = (suffix) => {
-  return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
+if (notGenerated) {
+  const ids = services.map(({ id }) => id)
+  const queryString = ids.join('&services=')
+
+  const { data, error = null } = await useFetch(`/api/services?services=${queryString}`)
+  const createBgColor = (suffix) => {
+    return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
+  }
+  data?.value?.forEach((s, i) => {
+    const itemClass = createBgColor(s.imgUrl || i)
+    links.value.forEach(({ path, services }) => {
+      if (path.includes(route?.params?.model[0])) {
+        services.forEach(({ id }, i) => {
+          if (id === s.id)
+            services[i] = { ...s, itemClass }
+        })
+      }
+    })
+  })
 }
-data?.value?.forEach((s, i) => {
-  const itemClass = createBgColor(s.imgUrl || i)
-  childeServices.value.push({ ...s, itemClass })
-})
+
+console.log('services: ', services)
 
 // if (error) console.error(error)
 // onMounted(async() => {
@@ -57,7 +66,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
       </content-chevron-down>
 
       <div id="contents">
-        <div v-for="({ name, imgUrl='', itemClass }, i) in childeServices" :key="generatedKey(name)"
+        <div v-for="({ name, imgUrl='', itemClass = '', path = '/' }, i) in services" :key="generatedKey(name)"
           :id="`content-${i}`" :style="`
           background-image: url('${imgUrl}');
           background-position: center;
@@ -66,10 +75,13 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           <!-- <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
             {{ name || `some name ${i}` }}
           </span> -->
-          <div class="mx-4 bg-white opacity-70 backdrop-blur-sm rounded-md px-2">
-            <h1
-              :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
-              {{ name || `some name ${i}` }}</h1>
+          <div class="mx-4">
+            <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" routes-prefix="/model" :path="path"
+              color="red-600" class="flex mx-auto h-20 ma-2 pa-4 rounded-xl align-center justify-center">
+              <h1 :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
+                {{ name || `some name ${i}` }}</h1>
+            </r-home-menu>
+
           </div>
         </div>
       </div>
