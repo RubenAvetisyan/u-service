@@ -23,11 +23,9 @@ const links = useNavigationLinks()
 const fpCover = useFpCover()
 
 if (!links.value.length) {
-  const { pending: isPending, data } = await useLazyAsyncData('links', () => $fetch('/api/notion', {
-    body: {
-      fp: true,
-    },
-  }))
+  const { pending: isPending, data } = await useAsyncData(
+    'links',
+    () => notionFetch('/notion?fp=true'))
 
   pending.value = isPending
   // const { data } = await useFetch('/api/notion')
@@ -59,8 +57,6 @@ if (links.value.length) {
   })
 }
 
-const generateImageLink = (path, ext) => `${path}.${ext}`
-
 const rightNavigation = [
   {
     path: '/about',
@@ -88,8 +84,6 @@ const generatedKey = str => useGeneratedKey(str)
     </Head>
     <Link v-if="!!linkRels.length" v-for="({ imgUrl, path }) in linkRels" :key="generatedKey(`${path}-avif`)" rel="preload"
       :href="imgUrl" as="image" />
-
-    <!-- generateImageLink(imgUrl, 'avif') -->
 
     </Html>
     <!-- HEADER -->

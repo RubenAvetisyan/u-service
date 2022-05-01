@@ -4,7 +4,6 @@ import { useNavigationLinks } from '~~/composables/states'
 
 const route = useRoute()
 const links = useNavigationLinks()
-console.log('links: ', links.value)
 
 definePageMeta({
   key: route => route.fullPath,

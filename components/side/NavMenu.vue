@@ -10,16 +10,10 @@ defineProps({
   },
 })
 
-let baseUrl = ''
-
-if (process.server)
-  baseUrl = process.env.BASE_URL
-
 </script>
 
 <template>
-  <div
-    @click.stop="$router.replace(`${baseUrl}${path ? routesPrefix : ''}${path}`)"
+  <NuxtLink :to="!!path ? `${path ? routesPrefix : ''}${path}` : '/'"
     class="group space-x-10 cursor-pointer overflow-hidden relative max-w-sm max-h-12 mx-auto my-2 bg-white shadow-lg ring-1 ring-black/5 rounded-xl flex items-center gap-6 hover:shadow-md hover:shadow-gray-300 hover:dark:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-red-100 via-blue-500/50 to-gray-100"
   >
     <img
@@ -37,5 +31,5 @@ if (process.server)
         <slot name="secont-line"></slot>
       </span>
     </div>
-  </div>
+  </NuxtLink>
 </template>

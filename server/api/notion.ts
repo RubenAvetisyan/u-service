@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ServerResponse } from 'http'
-// import { useBody } from 'h3'
+import { useQuery } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
 import { Notion, getLinksFromResults, query } from '../utils/notion-db-query'
@@ -20,8 +20,9 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
       res.end()
     }
     else {
-      const body = req.body
-      if (!cover && body && body.fp) {
+      const q = useQuery(req)
+      console.log('q: ', q)
+      if (!cover && q?.fp) {
         const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
         const pages = await notion.client.pages.retrieve({ page_id: pageId })
 

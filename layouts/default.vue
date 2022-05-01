@@ -31,7 +31,7 @@ const pending = usePending()
     </header>
 
     <main class="snap-y snap-mandatory md:overflow-scroll sm:w-screen overflow-x-hidden h-screen">
-      <slot />
+      <slot v-if="!pending" />
     </main>
 
     <footer
