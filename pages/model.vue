@@ -31,6 +31,8 @@ if (notGenerated.value) {
   })
 }
 
+const bgImg = imgUrl => `bg-[url('${imgUrl}')`
+
 console.log('services: ', services)
 
 // if (error) console.error(error)
@@ -65,21 +67,21 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
       <content-chevron-down @click="() => scrollDown('#contents')" class="mt-[50vh] md:mt-[65vh] mb-[6vh]">
       </content-chevron-down>
 
-      <div v-if="services.length" id="contents">
+      <div v-if="services?.length" id="contents">
         <div v-for="({ name, imgUrl='', itemClass = '', path = '/' }, i) in services" :key="generatedKey(name)"
           :id="`content-${i}`" :style="`
           background-image: url('${imgUrl}');
           background-position: center;
           background-size: cover;`"
-          :class="['snap-start h-screen w-screen', itemClass, 'flex text-center items-center justify-center']">
+          :class="[bgImg,'snap-start h-screen w-screen relative', itemClass, 'flex text-center items-center justify-center']">
           <!-- <span :class="`flex h-screen pt-[calc(13vh+20px)] mx-auto p-4`">
             {{ name || `some name ${i}` }}
           </span> -->
-          <div class="mx-4">
+          <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" routes-prefix="/model" :path="path"
-              color="red-600" class="flex mx-auto h-20 ma-2 pa-4 rounded-xl align-center justify-center">
-              <h1 :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
-                {{ name || `some name ${i}` }}</h1>
+             class="flex mx-auto text-dark-50 hover:text-light-100 h-20 w-80 ma-2 rounded-xl align-center justify-center">
+              <span :class="['bg-clip-text font-bold text-stroke-blue-gray-500  font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
+                {{ name || `some name ${i}` }}</span>
             </r-home-menu>
 
           </div>
