@@ -5,7 +5,7 @@ import { defineNuxtConfig } from 'nuxt3'
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
   publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3000/',
+    baseUrl: 'app.netlify.com' || 'http://localhost:3000/',
   },
 
   privateRuntimeConfig: {
