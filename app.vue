@@ -83,11 +83,11 @@ if (!isServices) {
 
 const rightNavigation = [
   {
-    path: '/about',
+    path: 'about',
     name: 'Մեր մասին',
   },
   {
-    path: '/user',
+    path: 'user',
     name: 'Անձնական հաշիվ',
   },
   {
