@@ -116,7 +116,7 @@ const generatedKey = str => useGeneratedKey(str)
     </template>
 
     <!-- <template #nav v-if="name">
-      <r-top-navigation v-show="$device.isDesktop" routes-prefix="/model" :routes="links" :center="true">
+      <r-top-navigation v-show="$device.isDesktop" routes-prefix="model" :routes="links" :center="true">
       </r-top-navigation>
     </template> -->
 

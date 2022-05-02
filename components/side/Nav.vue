@@ -47,7 +47,7 @@ const fullSide = computed(() => {
       </div>
       <!-- nav -->
       <nav>
-        <r-side-nav-menu v-for="({ path, name }) in links" :key="`r-nav-link-${name}`" routes-prefix="/model"
+        <r-side-nav-menu v-for="({ path, name }) in links" :key="`r-nav-link-${name}`" routes-prefix="model"
           :path="path" class="block py-2 5 px-4" @click.stop="hide">
           <template #first-line>{{ name }}</template>
         </r-side-nav-menu>

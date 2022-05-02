@@ -8,8 +8,8 @@ const generatedKey = str => useGeneratedKey(str)
 const services = ref([])
 
 const link = ref({})
-const path = route?.params?.model
-const linkIndex = links.value.findIndex(({ path = '' }) => path?.length ? path.includes(route?.params?.model[0]) : false)
+const routePath = route?.params?.model?.length ? route?.params?.model[0] : ''
+const linkIndex = links.value.findIndex(({ path = '' }) => path?.length ? path.includes(routePath) : false)
 link.value = links.value[linkIndex]
 
 const linkRels = []
@@ -70,10 +70,10 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           background-size: cover;`"
           :class="[bgImg, 'snap-start h-screen w-screen relative', itemClass, 'flex text-center items-center justify-center']">
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
-            <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" routes-prefix="/model" :path="path"
-              class="flex mx-auto text-dark-50 hover:text-light-100 h-20 w-80 ma-2 rounded-xl align-center justify-center">
+            <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model" :path="path"
+              class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
               <span
-                :class="['bg-clip-text font-bold text-stroke-blue-gray-500  font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
+                :class="['bg-clip-text font-bold font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
                 {{ name || `some name ${i}` }}</span>
             </r-home-menu>
 

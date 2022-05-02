@@ -25,6 +25,8 @@ const props = defineProps({
 const ulPaddingX = ref(`px-${props.paddingX}px`)
 const ulPaddingR = props.paddingR ? ref(`pr-${props.paddingR}px`) : null
 const generatedKey = str => useGeneratedKey(str)
+
+const { baseUrl } = useRuntimeConfig()
 </script>
 
 <template>
@@ -35,8 +37,8 @@ const generatedKey = str => useGeneratedKey(str)
       v-for="({ path = '', name = '', onClick = null, style = null }, i) in routes"
       :key="generatedKey(`${name}-${i}`)"
     >
-      <r-link-button v-if="onClick" :path="`${path ? routesPrefix : ''}${path}`" @click="onClick">{{ name }}</r-link-button>
-      <r-link-button v-else="onClick" :path="`${path ? routesPrefix : ''}${path}`">{{ name }}</r-link-button>
+      <r-link-button v-if="onClick" @click="onClick">{{ name }}</r-link-button>
+      <r-link-button v-else="onClick" :path="`${baseUrl}${path ? routesPrefix : ''}${path}`">{{ name }}</r-link-button>
     </li>
   </ul>
 </template>
