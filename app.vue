@@ -9,8 +9,10 @@ const pending = usePending()
 const fpCover = useFpCover()
 
 const route = useRoute()
-console.log('route?.params?.model: ', route?.params?.model)
-const name = route?.params?.model?.length ? route?.params?.model[0] : ''
+const model = route?.params?.model
+console.log('model: ', model)
+const name = model?.length ? model[0] : ''
+console.log('name: ', name)
 
 const sidebar = useSidebar()
 
@@ -50,13 +52,9 @@ if (!isLinks) {
   }) || []
 }
 
-let linkIndex = links.value.findIndex(({ path = '' }) => path.includes(name))
-if (linkIndex !== -1)
-  link.value = links.value[linkIndex]
+const isServices = !!link.value.services?.length && link.value.services?.every(({ name = null }) => name) && !!model.length
 
-const isServices = link.value.services?.length && link.value.services?.every(({ name = null }) => name)
-
-if (!isServices && route.params?.model?.length) {
+if (!isServices) {
   const { pending: isPending, data: services } = await useLazyAsyncData(
     'services',
     () => notionFetch('/services'),
@@ -68,24 +66,20 @@ if (!isServices && route.params?.model?.length) {
   })
 
   pending.value = isPending
-
-  linkIndex = links.value.findIndex(({ path = '' }) => path.includes(name))
-  link.value = links.value[linkIndex]
   const createBgColor = (suffix) => {
     return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
   }
 
-  services.value?.forEach((s, i) => {
-    const itemClass = createBgColor(s.imgUrl || i)
-    const serviceIndex = link.value.services.findIndex(service => service.id === s.id)
+  links.value.forEach((link) => {
+    services.value?.forEach((s, i) => {
+      const serviceIndex = link.services.findIndex(({ id }) => s.id === id)
+      const itemClass = createBgColor(s.imgUrl || i)
 
-    if (serviceIndex !== -1)
-      links.value[linkIndex].services[serviceIndex] = { ...s, itemClass }
-    //
+      if (serviceIndex !== -1)
+        link.services[serviceIndex] = { ...s, itemClass }
+    })
   })
 }
-
-//
 
 const rightNavigation = [
   {
