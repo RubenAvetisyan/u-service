@@ -24,6 +24,7 @@ useMeta({
 })
 
 const { BASE_URL } = useRuntimeConfig()
+console.log('BASE_URL: ', BASE_URL)
 
 // const bgColor = computed(() => props?.color.includes('#') ? `[${props?.color}]` : `bg-${props?.color}`)
 </script>
