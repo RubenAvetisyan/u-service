@@ -23,8 +23,8 @@ useMeta({
   name: 'HomeMenu',
 })
 
-const { BASE_URL } = useRuntimeConfig()
-console.log('BASE_URL: ', BASE_URL)
+const { baseUrl } = useRuntimeConfig()
+console.log('BASE_URL: ', baseUrl)
 
 // const bgColor = computed(() => props?.color.includes('#') ? `[${props?.color}]` : `bg-${props?.color}`)
 </script>
