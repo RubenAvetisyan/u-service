@@ -5,12 +5,12 @@ definePageMeta({
   keepalive: true,
 })
 
-const pending = usePending()
+const isPending = usePending()
 const fpCover = useFpCover()
 
 const route = useRoute()
 const model = route?.params?.model
-console.log('model: ', model)
+
 const name = model?.length ? model[0] : ''
 console.log('name: ', name)
 
@@ -30,17 +30,17 @@ const link = ref({})
 const isLinks = !!links.value.length
 
 if (!isLinks) {
-  const { pending: isPending, data: notion } = await useLazyAsyncData(
+  const { pending, data: notion } = await useAsyncData(
     'notion',
-    () => notionFetch('/notion?fp=true'),
+    () => notionFetch('/notion?fp=true', { lazy: true }),
   )
 
   // When query string changes, refresh
-  watch(() => notion.value, async(a, b) => {
-    refresh()
+  watch(() => pending, async(a, b) => {
+    console.log('a, b: ', a, b)
   })
 
-  pending.value = isPending
+  isPending.value = pending.value
 
   fpCover.value = notion.value.cover
   links.value = notion.value.links.map((link) => {
@@ -55,7 +55,7 @@ if (!isLinks) {
 const isServices = !!link.value.services?.length && link.value.services?.every(({ name = null }) => name) && !!model.length
 
 if (!isServices) {
-  const { pending: isPending, data: services } = await useLazyAsyncData(
+  const { pending, data: services } = await useLazyAsyncData(
     'services',
     () => notionFetch('/services'),
   )
@@ -65,7 +65,7 @@ if (!isServices) {
     refresh()
   })
 
-  pending.value = isPending
+  isPending.value = pending
   const createBgColor = (suffix) => {
     return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
   }

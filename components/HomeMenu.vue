@@ -24,10 +24,8 @@ useMeta({
 })
 
 const { baseUrl } = useRuntimeConfig()
-console.log('BASE_URL: ', baseUrl)
 
 const bgColor = computed(() => props?.color)
-console.log('bgColor: ', bgColor)
 </script>
 
 <template>

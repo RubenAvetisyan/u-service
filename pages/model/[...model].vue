@@ -22,7 +22,6 @@ const title = ref('')
 
 const name = route?.params?.model?.length ? route?.params?.model[0] : ''
 const model = name.replace(/[-\s]/g, ' ') || ''
-console.log('model: ', model)
 
 computed({
   bgImg() {
