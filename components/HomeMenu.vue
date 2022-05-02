@@ -30,7 +30,7 @@ console.log('BASE_URL: ', baseUrl)
 </script>
 
 <template>
-  <NuxtLink :to="!!path ? `${BASE_URL}${path ? routesPrefix : ''}${path}` : BASE_URL"
+  <NuxtLink :to="!!path ? `${baseUrl}${path ? routesPrefix : ''}${path}` : baseUrl"
     :class="['group', 'flex-wrap-reverse bg-opacity-15 cursor-pointer overflow-hidden backdrop-blur-sm relative shadow-lg ring-1 ring-black/5 items-center hover:shadow-md hover:shadow-gray-300 hover:dark:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-transparent via-gray-500/50 to-transparent']">
     <img v-if="icon"
       class="w-6 h-6 shadow-lg rounded-full mx-auto transition duration-800 delay-75 ease-in-out group-hover:scale-125 group-hover:animate-bounce group-hover:grayscale shadow-lg shadow-red-600 group-hover:invert"
