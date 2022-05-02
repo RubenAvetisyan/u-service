@@ -2,7 +2,7 @@
 import { booleanLiteral, stringLiteral } from '@babel/types'
 import { defineNuxtConfig } from 'nuxt3'
 
-const isDev = process.env.development
+const isDev = process.env.NODE_ENV === 'development'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
