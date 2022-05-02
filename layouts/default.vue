@@ -1,6 +1,15 @@
 <script setup>
 /* eslint-disable no-console */
 const pending = usePending()
+const sidebar = useSidebar()
+const zIndex = computed(() => {
+  console.log('sidebar.value: ', sidebar.value)
+  return sidebar.value ? 'z-50' : 'z-0'
+})
+
+const { $device } = useNuxtApp()
+
+const isDesktopOrTablet = $device.isDesktop
 </script>
 
 <template>
@@ -8,12 +17,12 @@ const pending = usePending()
     class="flex flex-col md:items-center h-screen w-screen md:w-screen bg-current bg-center sm:bg-cover md:bg-clip-content"
   >
     <!-- sidebar -->
-    <r-side-nav></r-side-nav>
+    <r-side-nav v-if="isDesktopOrTablet && sidebar"></r-side-nav>
 
     <!-- header -->
     <header
       v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
-      class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0"
+      class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 bg-dark-50"
       style="min-height: 54px; min-width: 100%;"
     >
       <div

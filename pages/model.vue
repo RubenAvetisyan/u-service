@@ -8,49 +8,34 @@ const generatedKey = str => useGeneratedKey(str)
 const services = ref([])
 
 const link = ref({})
-const linkIndex = links.value.findIndex(({ path = '' }) => path.includes(route?.params?.model[0]))
+const path = route?.params?.model
+const linkIndex = links.value.findIndex(({ path = '' }) => path?.length ? path.includes(route?.params?.model[0]) : false)
 link.value = links.value[linkIndex]
 
-const notGenerated = link.value.services.length && link.value.services.every(({ name = null }) => !name)
-console.log('notGenerated: ', notGenerated)
+const linkRels = []
 
-if (notGenerated) {
-  const ids = link.value.services.map(({ id }) => id)
-  const queryString = ids.join('&services=')
-
-  const { data: newLinkServices, pending, refresh, error } = await useAsyncData(
-    'newLinkServices',
-    () => notionFetch(`/services?services=${queryString}`),
-  )
-
-  if (error.value)
-    throwError(error.value)
-
-  // When query string changes, refresh
-  watch(() => queryString, async(a, b) => {
-    console.log('a, b: ', a, b)
-    refresh()
-  })
-
-  console.log('newLinkServices: ', newLinkServices)
-  const createBgColor = (suffix) => {
-    return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
-  }
-
-  newLinkServices?.value?.forEach((s, i) => {
-    const itemClass = createBgColor(s.imgUrl || i)
-    const serviceIndex = link.value.services.findIndex(service => service.id === s.id)
-
-    if (serviceIndex !== -1) {
-      links.value[linkIndex].services[serviceIndex] = { ...s, itemClass }
-      console.log('service: ', links.value[linkIndex].services[serviceIndex])
-    }
-  })
-
-  // const { pending, data: linkServices, error = null } = await useLazyFetch(`/api/services?services=${queryString}`)
-
-  console.log('link.services: ', link.value.services)
+const linkRelPush = (imgUrl, path) => {
+  linkRels.push({ imgUrl, path })
 }
+
+if (links.value.length) {
+  links.value.forEach((link) => {
+    linkRelPush(link.imgUrl, link.path)
+    link.services.forEach(({ imgUrl = '', path = '' }) => {
+      if (imgUrl)
+        linkRelPush(imgUrl, path)
+    })
+  })
+}
+
+useMeta({
+  link: linkRels.map(({ imgUrl = '' }) => ({
+    key: 'index-page-backgound-avif',
+    rel: 'preload',
+    href: imgUrl,
+    as: 'image',
+  })).filter(({ href }) => href),
+})
 
 const bgImg = imgUrl => `bg-[url('${imgUrl}')`
 
@@ -88,7 +73,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" routes-prefix="/model" :path="path"
               class="flex mx-auto text-dark-50 hover:text-light-100 h-20 w-80 ma-2 rounded-xl align-center justify-center">
               <span
-                :class="['bg-clip-text font-bold text-stroke-blue-gray-500  font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
+                :class="['bg-clip-text font-bold text-stroke-blue-gray-500  font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1']">
                 {{ name || `some name ${i}` }}</span>
             </r-home-menu>
 

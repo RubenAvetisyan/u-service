@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 function toggle(el: Element, ...classNames: string[]) {
+  // eslint-disable-next-line no-undef
+  if (!el) throwError(`value of property "el" is "${el}"`)
   classNames.forEach(className => el.classList.toggle(className))
   // console.log('sidebarContent: ', el)
 }

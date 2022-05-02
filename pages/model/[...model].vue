@@ -19,7 +19,9 @@ const findLink = (match) => {
 
 const imgUrl = ref('')
 const title = ref('')
-const model = route?.params?.model[0]?.replace(/[-\s]/g, ' ') || ''
+
+const name = route?.params?.model?.length ? route?.params?.model[0] : ''
+const model = name.replace(/[-\s]/g, ' ') || ''
 console.log('model: ', model)
 
 computed({
@@ -30,7 +32,7 @@ computed({
   },
 })
 
-const link = findLink(route?.params?.model[0])
+const link = findLink(name)
 
 imgUrl.value = link?.imgUrl
 

@@ -1,6 +1,7 @@
 <script setup>
 /* eslint-disable no-console */
 const pending = usePending()
+const sidebar = useSidebar()
 </script>
 
 <template>
@@ -13,14 +14,14 @@ const pending = usePending()
     <!-- header -->
     <header
       v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
-      class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0"
+      class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 bg-dark-50"
       style="min-height: 54px; min-width: 100%;"
     >
       <div
         v-if="!!$slots.logo"
         id="logo"
         class="flex items-center pl-6 md:pl-8 w-61.25 min-h-13.5 max-h-[54px] overflow-hidden"
-        style="max-height: 54px;"
+        style="max-height: 34px;"
       >
         <slot name="logo" />
       </div>

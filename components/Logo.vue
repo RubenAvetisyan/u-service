@@ -1,6 +1,5 @@
 <script setup>
 /* eslint-disable no-console */
-import { reactive } from 'vue'
 const props = defineProps({
   src: {
     type: String,
@@ -18,9 +17,9 @@ const props = defineProps({
 
 const { width: w } = props
 
-const max = `max-w-${w / 4} max-h-${(w - (w * 75 / 100)) / 4}`
-const min = `min-w-${w / 4} min-h-${(w - (w * 75 / 100)) / 4}`
-const dimms = `w-${w / 4} h-${(w - (w * 75 / 100)) / 4}`
+// const max = `max-w-${w / 4} max-h-${(w - (w * 75 / 100)) / 4}`
+// const min = `min-w-${w / 4} min-h-${(w - (w * 75 / 100)) / 4}`
+// const dimms = `w-${w / 4} h-${(w - (w * 75 / 100)) / 4}`
 </script>
 
 <template>

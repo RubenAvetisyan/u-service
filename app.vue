@@ -5,57 +5,87 @@ definePageMeta({
   keepalive: true,
 })
 
+const pending = usePending()
+const fpCover = useFpCover()
+
 const route = useRoute()
-const name = route?.params?.model ? route?.params?.model[0] : ''
+console.log('route?.params?.model: ', route?.params?.model)
+const name = route?.params?.model?.length ? route?.params?.model[0] : ''
 
 const sidebar = useSidebar()
 
 const onClick = () => {
   sidebar.value = !sidebar.value
-  useSidebarToggle()
+  useTimeoutFn(() => useSidebarToggle(), 250)
 }
-
-const pending = usePending()
 
 // const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
 
 const links = useNavigationLinks()
-const fpCover = useFpCover()
 
-if (!links.value.length) {
-  const { pending: isPending, data } = await useAsyncData(
-    'links',
-    () => notionFetch('/notion?fp=true'))
+const link = ref({})
+
+const isLinks = !!links.value.length
+
+if (!isLinks) {
+  const { pending: isPending, data: notion } = await useLazyAsyncData(
+    'notion',
+    () => notionFetch('/notion?fp=true'),
+  )
+
+  // When query string changes, refresh
+  watch(() => notion.value, async(a, b) => {
+    refresh()
+  })
 
   pending.value = isPending
-  // const { data } = await useFetch('/api/notion')
 
-  if (data && data.value) {
-    fpCover.value = data.value.cover
-    links.value = data.value.links.map((link) => {
-      const name = link.name.split(' ')
-      return {
-        ...link,
-        splitedName: name,
-      }
-    }) || []
+  fpCover.value = notion.value.cover
+  links.value = notion.value.links.map((link) => {
+    const splitedName = link.name.split(' ')
+    return {
+      ...link,
+      splitedName,
+    }
+  }) || []
+}
+
+let linkIndex = links.value.findIndex(({ path = '' }) => path.includes(name))
+if (linkIndex !== -1)
+  link.value = links.value[linkIndex]
+
+const isServices = link.value.services?.length && link.value.services?.every(({ name = null }) => name)
+
+if (!isServices && route.params?.model?.length) {
+  const { pending: isPending, data: services } = await useLazyAsyncData(
+    'services',
+    () => notionFetch('/services'),
+  )
+
+  // When query string changes, refresh
+  watch(() => services.value, async(a, b) => {
+    refresh()
+  })
+
+  pending.value = isPending
+
+  linkIndex = links.value.findIndex(({ path = '' }) => path.includes(name))
+  link.value = links.value[linkIndex]
+  const createBgColor = (suffix) => {
+    return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
   }
-}
 
-const linkRels = ref([])
-const linkRelPush = (imgUrl, path) => {
-  linkRels.value.push({ imgUrl, path })
-}
+  services.value?.forEach((s, i) => {
+    const itemClass = createBgColor(s.imgUrl || i)
+    const serviceIndex = link.value.services.findIndex(service => service.id === s.id)
 
-if (links.value.length) {
-  links.value.forEach((link) => {
-    linkRelPush(link.imgUrl, link.path)
-    link.services.forEach(({ imgUrl = '', path = '' }) => {
-      if (imgUrl)
-        linkRelPush(imgUrl, path)
-    })
+    if (serviceIndex !== -1)
+      links.value[linkIndex].services[serviceIndex] = { ...s, itemClass }
+    //
   })
 }
+
+//
 
 const rightNavigation = [
   {
@@ -63,7 +93,7 @@ const rightNavigation = [
     name: 'Մեր մասին',
   },
   {
-    path: '/model/2',
+    path: '/user',
     name: 'Անձնական հաշիվ',
   },
   {
@@ -82,8 +112,8 @@ const generatedKey = str => useGeneratedKey(str)
     <Head>
       <Meta name="description" :content="`My page's ${name} description`" />
     </Head>
-    <Link v-if="!!linkRels.length" v-for="({ imgUrl, path }) in linkRels" :key="generatedKey(`${path}-avif`)" rel="preload"
-      :href="imgUrl" as="image" />
+    <!-- <Link v-if="!!linkRels.length" v-for="({ imgUrl, path }) in linkRels" :key="generatedKey(`${path}-avif`)"
+      rel="preload" :href="imgUrl" as="image" /> -->
 
     </Html>
     <!-- HEADER -->
@@ -97,7 +127,7 @@ const generatedKey = str => useGeneratedKey(str)
     </template> -->
 
     <template #header-right>
-      <r-top-navigation v-if="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32">
+      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32">
       </r-top-navigation>
       <!-- MOBILE BUTTON -->
       <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">
