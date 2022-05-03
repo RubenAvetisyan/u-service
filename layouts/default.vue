@@ -15,10 +15,10 @@ nuxtApp.hook('page:finish', () => {
   console.log('loading.value: ', loading.value)
 })
 
-const zIndex = computed(() => {
-  console.log('sidebar.value: ', sidebar.value)
-  return sidebar.value ? 'z-50' : 'z-0'
-})
+// const zIndex = computed(() => {
+//   console.log('sidebar.value: ', sidebar.value)
+//   return sidebar.value ? 'z-50' : 'z-0'
+// })
 
 const { $device } = useNuxtApp()
 
