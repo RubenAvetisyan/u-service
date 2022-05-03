@@ -27,6 +27,12 @@ const ulPaddingR = props.paddingR ? ref(`pr-${props.paddingR}px`) : null
 const generatedKey = str => useGeneratedKey(str)
 
 const { baseUrl } = useRuntimeConfig()
+
+const loading = useLoading()
+
+const refreshLoading = () => {
+  loading.value = true
+}
 </script>
 
 <template>
@@ -37,8 +43,8 @@ const { baseUrl } = useRuntimeConfig()
       v-for="({ path = '', name = '', onClick = null, style = null }, i) in routes"
       :key="generatedKey(`${name}-${i}`)"
     >
-      <r-link-button v-if="onClick" @click="onClick">{{ name }}</r-link-button>
-      <r-link-button v-else="onClick" :path="`${baseUrl}${path ? routesPrefix : ''}${path}`">{{ name }}</r-link-button>
+      <r-link-button v-if="onClick" @click.stop="onClick">{{ name }}</r-link-button>
+      <r-link-button v-else="onClick" :path="`${baseUrl}${path ? routesPrefix : ''}${path}`" @click="refreshLoading">{{ name }}</r-link-button>
     </li>
   </ul>
 </template>

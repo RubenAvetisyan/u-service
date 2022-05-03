@@ -8,10 +8,6 @@ defineProps({
 })
 
 const sidebar = useSidebar()
-const hide = () => {
-  useSidebarToggle()
-  sidebar.value = false
-}
 
 const links = useNavigationLinks()
 
@@ -22,6 +18,15 @@ const isDesktopOrTablet = $device.isDesktop
 const fullSide = computed(() => {
   return isDesktopOrTablet ? null : 'flex-1'
 })
+
+const loading = useLoading()
+
+const hide = () => {
+  useSidebarToggle()
+  sidebar.value = false
+  loading.value = true
+  console.log('loading.value: ', loading.value)
+}
 
 </script>
 
@@ -41,7 +46,7 @@ const fullSide = computed(() => {
         <div class="flex w-60 h-8 p-2 m-0">
           <r-logo :width="48"></r-logo>
         </div>
-        <div class="w-4 items-center justify-center text-center cursor-pointer" @click.stop="hide">
+        <div class="w-4 items-center justify-center text-center cursor-pointer" @click.stop="()=>sidebar = false">
           <RCloseSvg fill="#64748b" />
         </div>
       </div>

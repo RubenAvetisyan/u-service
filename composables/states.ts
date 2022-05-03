@@ -18,3 +18,7 @@ export const useFpCover = () => {
 export const usePending = () => {
   return useState('pending', () => (false))
 }
+
+export const useLoading = () => {
+  return useState('loading', () => false)
+}
