@@ -118,11 +118,11 @@ const generatedKey = str => useGeneratedKey(str)
     </template> -->
 
     <template #header-right>
-      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32">
+      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32" class="text-light-100">
       </r-top-navigation>
       <!-- MOBILE BUTTON -->
       <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">
-        <r-link-button @click="onClick">Ցանկ</r-link-button>
+        <r-link-button @click="onClick" class="text-light-100 bg-dark-50">Ցանկ</r-link-button>
       </div>
     </template>
     <!-- END HEADER -->

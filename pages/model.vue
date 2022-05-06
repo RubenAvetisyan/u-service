@@ -36,7 +36,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
         <content-btn dark>ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
         <content-btn>Առկա ծառայություններ</content-btn>
       </div>
-      <content-chevron-down @click="() => scrollDown('#contents')" class="mt-[50vh] md:mt-[65vh] mb-[6vh]">
+      <content-chevron-down @click="() => scrollDown('#contents')" class="ms:mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]">
       </content-chevron-down>
 
       <div v-if="link.services?.length" id="contents">
@@ -55,7 +55,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
           </div>
           <content-chevron-down
             @click="() => scrollDown(i + 1 < link.services.length ? `#content-${i + 1}` : '#main-content')"
-            :class="['mt-[50vh] md:mt-[65vh] mb-[6vh] absolute', i + 1 >= link.services.length ? 'rotate-180' : null]">
+            :class="['mt-[50vh] md:mt-[65vh] mb-[6vh] absolute rounded-full mx-auto', i + 1 >= link.services.length ? 'rotate-180' : null]">
           </content-chevron-down>
         </div>
       </div>

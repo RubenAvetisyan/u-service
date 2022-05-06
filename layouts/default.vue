@@ -39,7 +39,7 @@ watch(() => route.fullPath, (a, b) => {
 
 <template>
   <div :style="`background-image: url('${backgroundImg}');`"
-    class="flex flex-col md:items-center h-screen w-screen md:w-screen bg-current bg-center sm:bg-cover md:bg-clip-content bg-fixed bg-center">
+    class="box-border flex flex-col md:items-center h-full w-full bg-current bg-center bg-cover bg-fixed bg-center">
     <!-- sidebar -->
     <r-side-nav v-if="isDesktopOrTablet && sidebar"></r-side-nav>
 
@@ -48,7 +48,7 @@ watch(() => route.fullPath, (a, b) => {
       class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 bg-dark-50"
       style="min-height: 54px; min-width: 100%;">
       <div v-if="!!$slots.logo" id="logo"
-        class="flex items-center pl-6 md:pl-8 w-61.25 min-h-13.5 max-h-[54px] overflow-hidden"
+        class="flex items-center pl-6 md:pl-8 w-61.25 min-h-13.5 max-h-[54px]"
         style="max-height: 54px;">
         <slot name="logo" />
       </div>
@@ -58,7 +58,7 @@ watch(() => route.fullPath, (a, b) => {
       <slot name="header-right" />
     </header>
 
-    <main class="snap-y snap-mandatory md:overflow-scroll sm:w-screen overflow-x-hidden h-screen">
+    <main class="snap-y snap-mandatory overflow-y-scroll overflow-x-hidden w-full h-screen">
       <slot />
     </main>
 
