@@ -26,6 +26,10 @@ watch(() => route.fullPath, (a, b) => {
   const app = useNuxtApp()
 })
 
+const isModal = ref(false)
+
+const showModal = () => isModal.value = !isModal.value
+
 </script>
 
 <template>
@@ -41,10 +45,11 @@ watch(() => route.fullPath, (a, b) => {
       </div>
       <div
         class="flex flex-col md:flex-row place-items-center text-center items-center justify-center md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4">
-        <content-btn dark>ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
-        <content-btn>Առկա ծառայություններ</content-btn>
+        <content-btn dark @click="showModal">ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
+        <content-btn @click.stop="$router.replace('/')">Առկա ծառայություններ</content-btn>
       </div>
-      <content-chevron-down v-if="!!link.services.length" @click="() => scrollDown('#contents')" class="ms:mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]">
+      <content-chevron-down v-if="!!link.services.length" @click="() => scrollDown('#contents')"
+        class="mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]">
       </content-chevron-down>
 
       <div v-if="link.services?.length" id="contents">
@@ -67,6 +72,9 @@ watch(() => route.fullPath, (a, b) => {
           </content-chevron-down>
         </div>
       </div>
+
+      <!-- MODAL -->
+      <content-form-custom-order :show="isModal" :on-submit="showModal" :on-cancel="showModal"></content-form-custom-order>
     </div>
   </div>
 </template>
