@@ -9,37 +9,13 @@ definePageMeta({
   key: route => route.fullPath,
 })
 
-const findLink = (match) => {
-  const res = links.value.find(({ path }) => {
-    return path.includes(match)
-  })
-
-  return res || null
-}
-
-const imgUrl = ref('')
-const title = ref('')
+const title = useTitle()
 
 const name = route?.params?.model?.length ? route?.params?.model[0] : ''
 const model = name.replace(/[-\s]/g, ' ') || ''
 
-computed({
-  bgImg() {
-    return {
-      '--bg-img': imgUrl.value,
-    }
-  },
-})
-
-const link = findLink(name)
-
-imgUrl.value = link?.imgUrl
-
-title.value = link?.name || ''
-
 useMeta({
   title: model.toLocaleUpperCase(),
-  style: { type: 'text/css', children: `#__nuxt > div {background-image: url('${imgUrl.value}');}` },
 })
 
 </script>

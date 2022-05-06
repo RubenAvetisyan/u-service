@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-undef */
 export const useSidebar = () => {
   return useState('show', (isHidden = false) => isHidden)
@@ -21,4 +22,18 @@ export const usePending = () => {
 
 export const useLoading = () => {
   return useState('loading', () => false)
+}
+
+export const useBackgroundImg = () => {
+  return useState('backgroundImg', () => '')
+}
+
+export const useCurrentService = () => {
+  const link: { name?: string } | any = useFindLink()
+  return useState('currentService', () => link)
+}
+
+export const useTitle = () => {
+  const link = useCurrentService()
+  return useState('title', () => link.value?.name || '')
 }

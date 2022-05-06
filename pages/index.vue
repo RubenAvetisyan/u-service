@@ -7,11 +7,11 @@ const route = useRoute()
 const links = useNavigationLinks()
 const fpCover = useFpCover()
 
-const backgroundImg = fpCover.value
-
+const backgroundImg = useBackgroundImg()
+useMyBackgoundImg()
 const linkRels = computed(() => {
   // const initial = null
-  const res = [{ imgUrl: backgroundImg, path: route?.params?.model || route.path }]
+  const res = [{ imgUrl: backgroundImg.value, path: route?.params?.model || route.path }]
   const linkRelPush = (imgUrl, path) => {
     res.push({ imgUrl, path })
   }
@@ -31,12 +31,12 @@ const linkRels = computed(() => {
 
 useMeta({
   title: 'Home',
-  style: [
-    {
-      type: 'text/css',
-      children: `#__nuxt>div {background-image: url(${backgroundImg}); background-position: center; background-size: cover;}`,
-    },
-  ],
+  // style: [
+  //   {
+  //     type: 'text/css',
+  //     children: `#__nuxt>div {background-image: url(${backgroundImg.value}); background-position: center; background-size: cover;}`,
+  //   },
+  // ],
   link: linkRels.value.map(({ imgUrl }) => ({
     key: 'index-page-backgound-avif',
     rel: 'preload',

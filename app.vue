@@ -12,7 +12,6 @@ const route = useRoute()
 const model = route?.params?.model
 
 const name = model?.length ? model[0] : ''
-console.log('name: ', name)
 
 const sidebar = useSidebar()
 
@@ -20,8 +19,6 @@ const onClick = () => {
   sidebar.value = !sidebar.value
   useTimeoutFn(() => useSidebarToggle(), 250)
 }
-
-// const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
 
 const links = useNavigationLinks()
 

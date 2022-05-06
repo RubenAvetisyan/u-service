@@ -1,5 +1,6 @@
 <script setup>
 /* eslint-disable no-console */
+const route = useRoute()
 const pending = usePending()
 const sidebar = useSidebar()
 
@@ -23,11 +24,18 @@ nuxtApp.hook('page:finish', () => {
 const { $device } = useNuxtApp()
 
 const isDesktopOrTablet = $device.isDesktop
+const backgroundImg = computed(() => {
+  const bg = useBackgroundImg()
+  if (!bg.value) useMyBackgoundImg()
+
+  return bg.value
+})
+
 </script>
 
 <template>
-  <div
-    class="flex flex-col md:items-center h-screen w-screen md:w-screen bg-current bg-center sm:bg-cover md:bg-clip-content">
+  <div :style="`background-image: url('${backgroundImg}');`"
+    class="flex flex-col md:items-center h-screen w-screen md:w-screen bg-current bg-center sm:bg-cover md:bg-clip-content bg-fixed bg-center">
     <!-- sidebar -->
     <r-side-nav v-if="isDesktopOrTablet && sidebar"></r-side-nav>
 
