@@ -5,44 +5,12 @@ const route = useRoute()
 // const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
 
 const links = useNavigationLinks()
-const fpCover = useFpCover()
-
-const backgroundImg = useBackgroundImg()
 useMyBackgoundImg()
-const linkRels = computed(() => {
-  // const initial = null
-  const res = [{ imgUrl: backgroundImg.value, path: route?.params?.model || route.path }]
-  const linkRelPush = (imgUrl, path) => {
-    res.push({ imgUrl, path })
-  }
-
-  if (links.value.length) {
-    links.value.forEach((link) => {
-      linkRelPush(link.imgUrl, link.path)
-      link.services.forEach(({ imgUrl = '', path = '' }) => {
-        if (imgUrl)
-          linkRelPush(imgUrl, path)
-      })
-    })
-  }
-
-  return res
-})
+const linkRels = useLinkMeta()
 
 useMeta({
   title: 'Home',
-  // style: [
-  //   {
-  //     type: 'text/css',
-  //     children: `#__nuxt>div {background-image: url(${backgroundImg.value}); background-position: center; background-size: cover;}`,
-  //   },
-  // ],
-  link: linkRels.value.map(({ imgUrl }) => ({
-    key: 'index-page-backgound-avif',
-    rel: 'preload',
-    href: imgUrl,
-    as: 'image',
-  })),
+  link: linkRels.value,
 })
 </script>
 

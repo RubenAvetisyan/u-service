@@ -37,3 +37,26 @@ export const useTitle = () => {
   const link = useCurrentService()
   return useState('title', () => link.value?.name || '')
 }
+
+export const useLinkMeta = () => {
+  const route = useRoute()
+  const backgroundImg = useBackgroundImg()
+  const linkRels = [{ imgUrl: backgroundImg.value, path: route?.params?.model || route.path }]
+  const links = useNavigationLinks()
+
+  if (links.value.length) {
+    links.value.forEach(({ imgUrl: linkImgUrl = '', path: linkPath = '', services = [] }) => {
+      linkRels.push({ imgUrl: linkImgUrl, path: linkPath })
+      services.forEach(({ imgUrl = '', path = '' }) => {
+        if (imgUrl)
+          linkRels.push({ imgUrl, path })
+      })
+    })
+  }
+  return useState('linkMeta', () => linkRels.map(({ imgUrl = '' }, i) => ({
+    key: `page-backgound-avif-${i}`,
+    rel: 'preload',
+    href: imgUrl,
+    as: 'image',
+  })).filter(({ href }) => href))
+}

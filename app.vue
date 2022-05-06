@@ -97,8 +97,8 @@ const generatedKey = str => useGeneratedKey(str)
 </script>
 
 <template>
-  <NuxtLayout :name="$device.isDesktop ? 'default' : 'mobile'">
-    <Html lang="en-US">
+  <NuxtLayout :name="$device.isDesktopOrTablet ? 'default' : 'mobile'">
+    <Html lang="hy">
 
     <Head>
       <Meta name="description" :content="`My page's ${name} description`" />

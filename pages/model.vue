@@ -1,40 +1,17 @@
 <script setup>
 /* eslint-disable no-console */
-const route = useRoute()
 
 const links = useNavigationLinks()
 
 const generatedKey = str => useGeneratedKey(str)
-const services = ref([])
 
 const link = ref({})
-const routePath = route?.params?.model?.length ? route?.params?.model[0] : ''
-const linkIndex = links.value.findIndex(({ path = '' }) => path?.length ? path.includes(routePath) : false)
-link.value = links.value[linkIndex]
+link.value = useFindLink()
 
-const linkRels = []
-
-const linkRelPush = (imgUrl, path) => {
-  linkRels.push({ imgUrl, path })
-}
-
-if (links.value.length) {
-  links.value.forEach((link) => {
-    linkRelPush(link.imgUrl, link.path)
-    link.services.forEach(({ imgUrl = '', path = '' }) => {
-      if (imgUrl)
-        linkRelPush(imgUrl, path)
-    })
-  })
-}
+const linkRels = useLinkMeta()
 
 useMeta({
-  link: linkRels.map(({ imgUrl = '' }) => ({
-    key: 'index-page-backgound-avif',
-    rel: 'preload',
-    href: imgUrl,
-    as: 'image',
-  })).filter(({ href }) => href),
+  link: linkRels.value,
 })
 
 const bgImg = imgUrl => `bg-[url('${imgUrl}')`
