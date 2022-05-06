@@ -2,12 +2,12 @@
 import { booleanLiteral, stringLiteral } from '@babel/types'
 import { defineNuxtConfig } from 'nuxt3'
 
-const isDev = process.env.NODE_ENV === 'development'
+// const isDev = process.env.NODE_ENV === 'development'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
   publicRuntimeConfig: {
-    baseUrl: isDev ? 'http://localhost:3000/' : '/',
+    baseUrl: '/',
   },
 
   privateRuntimeConfig: {

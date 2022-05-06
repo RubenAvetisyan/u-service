@@ -1,5 +1,6 @@
 <script setup>
 /* eslint-disable no-console */
+const route = useRoute()
 const pending = usePending()
 const sidebar = useSidebar()
 
@@ -14,10 +15,21 @@ nuxtApp.hook('page:finish', () => {
   loading.value = false
   console.log('loading.value: ', loading.value)
 })
+const backgroundImg = computed(() => {
+  const bg = useBackgroundImg()
+  if (!bg.value) useMyBackgoundImg()
+
+  return bg.value
+})
+
+watch(() => route.fullPath, (a, b) => {
+  if (a !== b) useMyBackgoundImg()
+})
 </script>
 
 <template>
-  <div class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover">
+  <div :style="`background-image: url('${backgroundImg}');`"
+    class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover bg-fixed">
     <!-- sidebar -->
     <r-side-nav v-if="sidebar"></r-side-nav>
 

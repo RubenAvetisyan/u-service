@@ -41,11 +41,9 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
 
       <div v-if="link.services?.length" id="contents">
         <div v-for="({ name='', imgUrl='', itemClass = '', path = '/' }, i) in link.services"
-          :key="generatedKey(name + '-' + i)" :id="`content-${i}`" :style="`
-          background-image: url('${imgUrl}');
-          background-position: center;
-          background-size: cover;`"
-          :class="[bgImg, 'snap-start h-screen w-screen relative', itemClass, 'flex text-center items-center justify-center']">
+          :key="generatedKey(name + '-' + i)" :id="`content-${i}`"
+          :style="`background-image: url('${imgUrl}');`"
+          :class="[bgImg, 'snap-start h-screen w-screen relative bg-cover bg-fixed bg-center', itemClass, 'flex text-center items-center justify-center']">
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model" :path="path"
               class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">

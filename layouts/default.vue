@@ -31,6 +31,10 @@ const backgroundImg = computed(() => {
   return bg.value
 })
 
+watch(() => route.fullPath, (a, b) => {
+  if (a !== b) useMyBackgoundImg()
+})
+
 </script>
 
 <template>
