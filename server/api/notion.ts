@@ -5,7 +5,24 @@ import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
 import { Notion, getLinksFromResults, query } from '../utils/notion-db-query'
 
-let cover = null
+const cover = null
+
+interface External {
+  url: string
+}
+
+interface File {
+  url: string
+}
+
+interface Cover {
+  file?: File
+  external?: External
+}
+
+interface Pages {
+  cover: Cover
+}
 
 const notion = new Notion(process.env.NOTION_API_KEY)
 // const { query, getLinksFromResults } = notion
@@ -21,20 +38,21 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
     }
     else {
       const q = useQuery(req)
+      let newCover = ''
 
       if (!cover && q?.fp) {
         const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
         const pages = await notion.client.pages.retrieve({ page_id: pageId })
+        const { cover }: Pages = Object.assign({ cover: null }, pages)
 
-        const newCover = pages?.cover?.external?.url || pages?.cover?.file?.url
-        cover = cover !== newCover ? newCover : cover
+        newCover = cover?.external?.url || cover?.file?.url
       }
       // notion.client.pages.retrive()
       const { results = {} } = await query(notion.client, database_id) || {}
 
       return {
         links: await getLinksFromResults(results),
-        cover: cover || '',
+        cover: newCover || '',
       }
     }
   }
