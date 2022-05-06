@@ -44,7 +44,7 @@ watch(() => route.fullPath, (a, b) => {
         <content-btn dark>ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ</content-btn>
         <content-btn>Առկա ծառայություններ</content-btn>
       </div>
-      <content-chevron-down @click="() => scrollDown('#contents')" class="ms:mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]">
+      <content-chevron-down v-if="!!link.services.length" @click="() => scrollDown('#contents')" class="ms:mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]">
       </content-chevron-down>
 
       <div v-if="link.services?.length" id="contents">
