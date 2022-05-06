@@ -1,12 +1,17 @@
 <script setup>
 /* eslint-disable no-console */
 
+const route = useRoute()
+
 const links = useNavigationLinks()
 
 const generatedKey = str => useGeneratedKey(str)
 
-const link = ref({})
-link.value = useFindLink()
+let currentLink = useFindLink()
+
+const link = computed(() => {
+  return useFindLink()
+})
 
 const linkRels = useLinkMeta()
 
@@ -14,9 +19,12 @@ useMeta({
   link: linkRels.value,
 })
 
-const bgImg = imgUrl => `bg-[url('${imgUrl}')`
-
 const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
+
+watch(() => route.fullPath, (a, b) => {
+  if (a !== b) currentLink = useFindLink()
+  const app = useNuxtApp()
+})
 
 </script>
 
@@ -42,7 +50,7 @@ const scrollDown = selector => useScrollIntoParentNextSiblingElement(selector)
       <div v-if="link.services?.length" id="contents">
         <div v-for="({ name='', imgUrl='', itemClass = '', path = '/' }, i) in link.services"
           :key="generatedKey(name + '-' + i)" :id="`content-${i}`" :style="`background-image: url('${imgUrl}');`"
-          :class="[bgImg, 'snap-start h-screen w-screen relative bg-cover bg-fixed bg-center', itemClass, 'flex text-center items-center justify-center']">
+          :class="['snap-start h-screen w-screen relative bg-cover bg-fixed bg-center', itemClass, 'flex text-center items-center justify-center']">
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
               :path="path"

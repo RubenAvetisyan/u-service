@@ -31,7 +31,6 @@ const loading = useLoading()
 
 const onClick = () => {
   loading.value = true
-  console.log('loading.value: ', loading.value)
 }
 </script>
 
