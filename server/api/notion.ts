@@ -26,7 +26,7 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
         const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
         const pages = await notion.client.pages.retrieve({ page_id: pageId })
 
-        const newCover = pages?.cover?.external?.url
+        const newCover = pages?.cover?.external?.url || pages?.cover?.file?.url
         cover = cover !== newCover ? newCover : cover
       }
       // notion.client.pages.retrive()
