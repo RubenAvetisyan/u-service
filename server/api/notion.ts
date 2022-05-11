@@ -28,7 +28,13 @@ const notion = new Notion(process.env.NOTION_API_KEY)
 // const { query, getLinksFromResults } = notion
 
 const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID
-export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: string }> => {
+
+interface Response {
+  links: Link[]
+  cover: string
+  childeServices: []
+}
+export default async(req, res: ServerResponse): Promise<Response> => {
   const links: Link[] = []
   try {
     if (req.method === 'POST') {
@@ -48,11 +54,18 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
         newCover = cover?.external?.url || cover?.file?.url
       }
       // notion.client.pages.retrive()
-      const { results = {} } = await query(notion.client, database_id) || {}
+      const [retrive, { results }] = await query(notion.client, database_id) || []
+      console.log('retrive: ', retrive)
+      let children: {}[] = Object.entries(retrive.properties).filter(([key]): boolean => key.includes('db_child_'))
+        .map(([key, val]): Record<string, {}> => ({ key, value: val }))
+      children = children.map((prop: { value: { relation: { database_id?: string } } }) => prop.value.relation?.database_id)
+      console.log('children: ', children)
+      console.log('results: ', results)
 
       return {
-        links: await getLinksFromResults(results),
         cover: newCover || '',
+        links: await getLinksFromResults(results),
+        childeServices: retrive,
       }
     }
   }
@@ -71,6 +84,7 @@ export default async(req, res: ServerResponse): Promise<{ links: Link[]; cover: 
     return {
       links,
       cover,
+      childeServices: null,
     }
   }
 }

@@ -26,6 +26,8 @@ const link = ref({})
 
 const isLinks = !!links.value.length
 
+let isServices = false
+
 if (!isLinks) {
   const { pending, data: notion } = await useAsyncData(
     'notion',
@@ -39,6 +41,8 @@ if (!isLinks) {
 
   isPending.value = pending.value
 
+  isServices = !!notion.value.childeServices.length
+
   fpCover.value = notion.value.cover
   links.value = notion.value.links.map((link) => {
     const splitedName = link.name.split(' ')
@@ -49,12 +53,12 @@ if (!isLinks) {
   }) || []
 }
 
-const isServices = !!link.value.services?.length && link.value.services?.every(({ name = null }) => name) && !!model.length
+isServices = !!link.value.services?.length && link.value.services?.every(({ name = null }) => name) && !!model.length
 
 if (!isServices) {
   const { pending, data: services } = await useLazyAsyncData(
     'services',
-    () => notionFetch('/services'),
+    () => notionFetch('/services?db_id=d4af2b073c0e4d9ea64f85b72a23db0c'),
   )
 
   // When query string changes, refresh
@@ -109,7 +113,13 @@ const generatedKey = str => useGeneratedKey(str)
     </Html>
     <!-- HEADER -->
     <template #logo>
-      <r-logo :width="245" class="md:mt-0"></r-logo>
+      <r-logo :width="245" class="md:mt-0">
+
+        <template #img>
+          <img class="cursor-pointer bg-contain" src="/U-Service-full.png" />
+        </template>
+
+      </r-logo>
     </template>
 
     <!-- <template #nav v-if="name">
@@ -118,7 +128,8 @@ const generatedKey = str => useGeneratedKey(str)
     </template> -->
 
     <template #header-right>
-      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32" class="text-light-100">
+      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32"
+        class="text-light-100">
       </r-top-navigation>
       <!-- MOBILE BUTTON -->
       <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">

@@ -55,10 +55,13 @@ const props = {
   ],
 }
 
-export async function query(client, database_id, options?) {
+export async function query(client, database_id, options?: { filter: {} }) {
   try {
-    const pots = options || props
-    return client.databases.query({ database_id, ...pots })
+    const filters = options || props
+    return Promise.all([
+      client.databases.retrieve({ database_id }),
+      client.databases.query({ database_id, ...filters }),
+    ])
   }
   catch (error) {
     console.error('error: ', error)
@@ -72,7 +75,7 @@ export async function getLinksFromResults(results) {
 
     if (archived) continue
 
-    const services = properties.services?.relation || []
+    const services = properties.child_database?.relation || []
 
     const dbImgUrls = properties?.img_url?.files || null
 
@@ -105,4 +108,29 @@ export async function getRelatedServices(relations) {
   }))
 
   return results
+}
+
+export type SetRelationFilter = {
+  property: string
+  relation: {
+    contains: string
+  }
+}[]
+
+interface Relations {
+  parent?: string[]
+  children?: string[]
+}
+
+export const setRelationFilter = (relations: Relations): SetRelationFilter => {
+  const and = []
+  const property = Object.keys(relations)[0] === 'parent' ? 'parent_database' : 'child_database'
+  const values = Object.values(relations[Object.keys(relations)[0]])
+  values.forEach((value: string) => and.push({
+    property,
+    relation: {
+      contains: value,
+    },
+  }))
+  return and
 }
