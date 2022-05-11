@@ -27,13 +27,13 @@ const { width: w } = props
     to="/"
     class="flex md:mx-auto justify-center items-center w-2/4 h-2/4 md:w-2/4 md:h-2/4"
   >
-    <slot name="img"></slot>
+    <slot v-if="$slots.img" name="img"></slot>
     <!-- <img
     v-if="!$slots.img"
       class="cursor-pointer bg-contain"
       src="/RUBEN_LOGO.svg"
     />-->
-    <svg
+    <svg v-else
       class="bg-cover overflow-hidden"
       clip-rule="evenodd"
       fill-rule="evenodd"
