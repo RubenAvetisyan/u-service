@@ -114,11 +114,9 @@ const generatedKey = str => useGeneratedKey(str)
     <!-- HEADER -->
     <template #logo>
       <r-logo :width="245" class="md:mt-0">
-
         <template #img>
           <img class="cursor-pointer bg-contain" src="/U-Service-full.png" />
         </template>
-
       </r-logo>
     </template>
 
