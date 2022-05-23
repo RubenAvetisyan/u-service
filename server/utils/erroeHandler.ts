@@ -20,7 +20,7 @@ function errorHandler(error: NotionClientError) {
   }
 }
 
-export default function(error) {
+export default function (error) {
   if (isNotionClientError(error))
     errorHandler(error)
 }

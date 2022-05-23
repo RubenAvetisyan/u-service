@@ -1,6 +1,5 @@
-
-import { booleanLiteral, stringLiteral } from '@babel/types'
-import { defineNuxtConfig } from 'nuxt3'
+// import { booleanLiteral, stringLiteral } from '@babel/types'
+import { defineNuxtConfig } from 'nuxt'
 
 // const isDev = process.env.NODE_ENV === 'development'
 
@@ -11,11 +10,23 @@ export default defineNuxtConfig({
   },
 
   privateRuntimeConfig: {
+    baseUrl: '/',
     NOTION_API_KEY: process.env.NOTION_API,
     NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
     NOTION_DATABASE_MAIN_SECTIONS_ID: process.env.NOTION_DATABASE_MAIN_SECTIONS_ID,
+    NOTION_MAIN_PAGE_ID: process.env.NOTION_MAIN_PAGE_ID,
   },
-
+  modules: [
+    '@vueuse/nuxt',
+    '@unocss/nuxt',
+    '@pinia/nuxt',
+    '@nuxtjs/color-mode',
+  ],
+  experimental: {
+    reactivityTransform: true,
+    // viteNode: true,
+  },
+  css: ['@/assets/styles/main.css'],
   components: {
     dirs: [
       {
@@ -30,22 +41,20 @@ export default defineNuxtConfig({
       },
     ],
   },
-
-  buildModules: ['@unocss/nuxt', '@vueuse/core/nuxt', '@nuxt/ui'],
-
-  css: ['@/assets/styles/main.css'],
-
   unocss: {
     preflight: true,
     icons: true,
   },
-
-  vite: {
-    define: {
-      'process.server': booleanLiteral,
-      'process.env.BASE_URL': stringLiteral,
-      'process.env.NOTION_API': stringLiteral,
-      'process.env.NOTION_DATABASE_ID': stringLiteral,
-    },
+  colorMode: {
+    classSuffix: '',
   },
+
+  // vite: {
+  //   define: {
+  //     'process.server': booleanLiteral,
+  //     'process.env.BASE_URL': stringLiteral,
+  //     'process.env.NOTION_API': stringLiteral,
+  //     'process.env.NOTION_DATABASE_ID': stringLiteral,
+  //   },
+  // },
 })

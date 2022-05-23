@@ -3,7 +3,9 @@ import type { ServerResponse } from 'http'
 import { useQuery } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
-import { Notion, getLinksFromResults, query } from '../utils/notion-db-query'
+import { Notion, getLinksFromResults, query, retrieveDb, retrievePage } from '../utils/notion-db-query'
+import type { FilterByObjectKey } from '../utils/helpers'
+import { filterByObjectKey } from '../utils/helpers'
 
 const cover = null
 
@@ -28,14 +30,15 @@ const notion = new Notion(process.env.NOTION_API_KEY)
 // const { query, getLinksFromResults } = notion
 
 const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID
+const mainPageId = process.env.NOTION_MAIN_PAGE_ID
 
 interface Response {
-  links: Link[]
+  links: Record<string, Link>
   cover: string
-  childeServices: []
+  childeServices: FilterByObjectKey | []
 }
-export default async(req, res: ServerResponse): Promise<Response> => {
-  const links: Link[] = []
+export default async (req, res: ServerResponse): Promise<Response> => {
+  let links = {}
   try {
     if (req.method === 'POST') {
       // Todo: handle post
@@ -43,29 +46,36 @@ export default async(req, res: ServerResponse): Promise<Response> => {
       res.end()
     }
     else {
+      console.log('==== Main Call ====')
       const q = useQuery(req)
       let newCover = ''
 
       if (!cover && q?.fp) {
-        const pageId = '46c70845-0bad-4377-968e-0d418abdc611'
-        const pages = await notion.client.pages.retrieve({ page_id: pageId })
+        const pages = await retrievePage(notion.client, mainPageId)
         const { cover }: Pages = Object.assign({ cover: null }, pages)
 
         newCover = cover?.external?.url || cover?.file?.url
       }
       // notion.client.pages.retrive()
-      const [retrive, { results }] = await query(notion.client, database_id) || []
-      console.log('retrive: ', retrive)
-      let children: {}[] = Object.entries(retrive.properties).filter(([key]): boolean => key.includes('db_child_'))
-        .map(([key, val]): Record<string, {}> => ({ key, value: val }))
-      children = children.map((prop: { value: { relation: { database_id?: string } } }) => prop.value.relation?.database_id)
-      console.log('children: ', children)
-      console.log('results: ', results)
+      const [{ properties: retrive = [] }, { results }] = await Promise.all([
+        retrieveDb(notion.client, database_id),
+        query(notion.client, database_id),
+      ])
 
+      const childeServices = filterByObjectKey(retrive, 'db_child_', result => result.map(([key, val]): Record<string, {}> => {
+        if (val.relation?.database_id)
+          return val.relation.database_id
+
+        return { key, value: val }
+      }))
+      console.log('childeServices: ', childeServices)
+      // console.log('results: ', results)
+
+      links = await getLinksFromResults(results)
       return {
         cover: newCover || '',
-        links: await getLinksFromResults(results),
-        childeServices: retrive,
+        links,
+        childeServices,
       }
     }
   }
@@ -84,7 +94,7 @@ export default async(req, res: ServerResponse): Promise<Response> => {
     return {
       links,
       cover,
-      childeServices: null,
+      childeServices: [],
     }
   }
 }

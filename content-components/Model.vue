@@ -18,6 +18,8 @@ const title = modelText.length === 1 ? `Service ${modelText}` : modelText
 
 <template>
   <h1
-    :class="['font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1', color]"
-  >{{ title }}</h1>
+    class="font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1" :class="[color]"
+  >
+    {{ title }}
+  </h1>
 </template>

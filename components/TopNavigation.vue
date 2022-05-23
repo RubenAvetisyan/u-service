@@ -37,14 +37,22 @@ const refreshLoading = () => {
 
 <template>
   <ul
-    :class="['flex items-center text-[#181b21]', center ? 'mx-auto' : null, ulPaddingR || ulPaddingX]"
+    class="flex items-center" :class="[center ? 'mx-auto' : null, ulPaddingR || ulPaddingX]"
   >
     <li
-      v-for="({ path = '', name = '', onClick = null, style = null }, i) in routes"
+      v-for="({ path = '', name = '', onClick = null }, i) in routes"
       :key="generatedKey(`${name}-${i}`)"
     >
-      <r-link-button v-if="onClick" @click.stop="onClick">{{ name }}</r-link-button>
-      <r-link-button v-else="onClick" :path="`${baseUrl}${path ? routesPrefix : ''}${path}`" @click="refreshLoading">{{ name }}</r-link-button>
+      <r-link-button v-if="onClick" @click.stop="onClick">
+        {{ name }}
+      </r-link-button>
+      <r-link-button v-else :path="`${baseUrl}${path ? routesPrefix : ''}${path}`" @click="refreshLoading">
+        {{ name }}
+      </r-link-button>
     </li>
   </ul>
+<!-- <div class="flex items-center text-[#181b21]">
+
+    <RDarkToggle class="mx-auto px-4" />
+</div> -->
 </template>

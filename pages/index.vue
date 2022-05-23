@@ -1,14 +1,13 @@
 <script setup>
 /* eslint-disable no-console */
+import { storeToRefs } from 'pinia'
 const route = useRoute()
 
-// const { data } = await useAsyncData('/api/notion', () => $fetch('/api/notion'), { watch: [links] })
-
-const links = useNavigationLinks()
-useMyBackgoundImg()
+const { links } = storeToRefs(useNotionStore())
+useMyBackgroundImg()
 const linkRels = useLinkMeta()
 
-useMeta({
+useHead({
   title: 'Home',
   link: linkRels.value,
 })
@@ -18,9 +17,12 @@ useMeta({
   <div class="h-[87vh] justify-between w-full flex x-overflow-hidden items-center mt-[13vh]">
     <div class="snap-start h-full w-full items-center">
       <div v-if="links" class="flex flex-wrap items-center mx-auto w-full pt-15 gap-3">
-        <r-home-menu v-for="({ path = '/', splitedName = '' }) in links" :key="`service-block-${splitedName.join('-')}`"
+        <r-home-menu
+          v-for="({ path = '/', splitedName = '' }, key) in links"
+          :key="`service-block-${splitedName.join('-')}-${key}`"
           routes-prefix="model" :path="path" color="bg-[#181a1f]" icon="/U-Service.png"
-          class="flex mx-auto w-40 h-40 ma-2 pa-4 rounded-full">
+          class="flex mx-auto w-40 h-40 ma-2 pa-4 rounded-full"
+        >
           <template #first-line>
             {{ splitedName[0] }}
           </template>

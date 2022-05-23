@@ -10,10 +10,13 @@ import { Client } from '@notionhq/client'
 
 export declare interface Link {
   id: string
+  parent_db_Id: string
+  parentServiceId: string
+  parentId: string | null
   name?: string
   path?: string
   imgUrl?: string
-  services?: {}[]
+  services?: {}
   url?: string
   cover?: string
   dbImgUrl?: [] | string
@@ -58,48 +61,74 @@ const props = {
 export async function query(client, database_id, options?: { filter: {} }) {
   try {
     const filters = options || props
-    return Promise.all([
-      client.databases.retrieve({ database_id }),
-      client.databases.query({ database_id, ...filters }),
-    ])
+    return client.databases.query({ database_id, ...filters })
   }
   catch (error) {
     console.error('error: ', error)
   }
 }
 
-export async function getLinksFromResults(results) {
-  const links: Link[] = []
+export async function retrieveDb(client, database_id) {
+  return client.databases.retrieve({ database_id })
+}
+
+export async function retrievePage(client, page_id) {
+  return await client.pages.retrieve({ page_id })
+}
+
+type ParentId = string
+export async function getLinksFromResults(results, parent_db_Id: ParentId = '') {
+  const links = {}
   for (let i = 0; i < getLength(results); i++) {
-    const { id, archived, properties, url = '', cover }: any = results[i]
+    const { id, parent, archived, properties, url = '', cover }: any = results[i]
 
-    if (archived) continue
+    if (archived)
+      continue
 
-    const services = properties.child_database?.relation || []
+    // const parentService = filterByObjectKey(results[i], 'db_parent_', result => result.map(([_, val]) => {
+    //   return val.relation.database_id
+    // })) as string[]
 
     const dbImgUrls = properties?.img_url?.files || null
 
-    links.push({
-      id,
+    links[id] = {
+      parent_db_Id: '',
+      db_Id: parent.database_id,
+      parentServiceId: '',
       name: properties.Name.title[0].text.content,
       path: properties?.path?.url,
       imgUrl: cover?.external?.url || cover?.file?.url,
-      dbImgUrl: dbImgUrls && dbImgUrls.length ? dbImgUrls[0].external?.url : '',
-      services,
+      dbImgUrl: dbImgUrls?.length ? dbImgUrls[0].external?.url : '',
+      services: {},
       url,
-    })
+      order: properties?.order?.number || i,
+    }
+
+    links[id].parent_db_Id = parent_db_Id
+
+    // setting services
+    const childeServices = Object.entries(properties).filter(([key]) => key.includes('db_child_')).map(([_, val]) => val) as { relation: { id: string }[] }[]
+
+    if (childeServices[0]?.relation)
+      childeServices[0].relation.forEach(({ id: serviceId }) => links[id].services[serviceId] = {})
+
+    const parentService = Object.entries(properties).filter(([key]) => key.includes('db_parent_')).map(([_, val]) => val) as { relation: { id: string }[] }[]
+
+    if (parentService[0]?.relation)
+      parentService[0].relation.forEach(({ id: relationId }) => links[id].parentServiceId = relationId)
   }
   return links
 }
 
 function getLength(arr) {
-  return arr.length
+  return arr?.length || undefined
 }
 
 export async function getRelatedServices(relations) {
   console.log('relations: ', relations[0])
-  if (!relations) return undefined
-  const results = await Promise.all(relations.map(async(relation) => {
+  if (!relations)
+    return undefined
+  const results = await Promise.all(relations.map(async (relation) => {
     const database_id = relation.id
 
     const database = await query(database_id, props)

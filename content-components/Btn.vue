@@ -18,9 +18,11 @@ const btnClass = props.dark ? 'bg-opacity-80 bg-[#181a1f] text-white' : 'bg-opac
 </script>
 
 <template>
-  <a href="#"
-    :class="[btnClass, 'inline-block rounded-2xl text-center tracking-wider font-medium uppercase flex justify-center items-center text-3 w-64 h-10']">
+  <a
+    href="#"
+    class="inline-block rounded-2xl text-center tracking-wider font-medium uppercase flex justify-center items-center text-3 w-64 h-10" :class="[btnClass]"
+  >
     <span v-if="text">{{ text }}</span>
-    <slot v-else></slot>
+    <slot v-else />
   </a>
 </template>

@@ -1,5 +1,7 @@
 <script setup>
 /* eslint-disable no-console */
+import { storeToRefs } from 'pinia'
+
 definePageMeta({
   layout: false,
   keepalive: true,
@@ -11,76 +13,124 @@ const fpCover = useFpCover()
 const route = useRoute()
 const model = route?.params?.model
 
+watch(() => model, async (a, b) => {
+  console.log('a, b: ', a, b)
+})
+
 const name = model?.length ? model[0] : ''
 
-const sidebar = useSidebar()
+const store = useStore()
+const { sidebarToggle } = store
 
 const onClick = () => {
-  sidebar.value = !sidebar.value
-  useTimeoutFn(() => useSidebarToggle(), 250)
+  sidebarToggle()
+  useTimeoutFn(() => { useSidebarToggle() }, 500)
 }
 
-const links = useNavigationLinks()
+const notionStore = useNotionStore()
+const { links, getChildeServices: childeServices } = storeToRefs(notionStore) // useNavigationLinks()
+console.log('links: ', links)
 
-const link = ref({})
-
-const isLinks = !!links.value.length
+let isLinks = !!useObjcectLength(links.value)
 
 let isServices = false
 
-if (!isLinks) {
-  const { pending, data: notion } = await useAsyncData(
-    'notion',
-    () => notionFetch('/notion?fp=true', { lazy: true }),
-  )
+const errorHandler = (error) => {
+  if (process.client || process.window) {
+    throwError(new Error(error))
+    clearError()
+  }
+  else {
+    console.error('ERROR MESSAGE while ftching data: ', error.value)
+  }
+}
 
-  // When query string changes, refresh
-  watch(() => pending, async(a, b) => {
-    console.log('a, b: ', a, b)
-  })
+let url = childeServices.value?.length ? `/services${notionStore.setQuery()}` : '/notion?fp=true'
+const fetch = () => useAsyncData(
+  'notion',
+  () => notionFetch(url, { lazy: true }),
+)
+
+let services = null
+const setLinks = (notionValue) => {
+  console.log('notionValue: ', notionValue)
+  if (url.includes('notion')) {
+    notionStore.setMainServices(notionValue)
+  }
+  else {
+    // links.value =
+    notionStore.addServices(notionValue.links)
+    console.log('links.value: ', links.value)
+  }
+}
+
+if (!useObjcectLength(links.value)) {
+  const { pending, data: notion, refresh, error } = await fetch()
+
+  if (error.value)
+    errorHandler(error.value)
 
   isPending.value = pending.value
 
   isServices = !!notion.value.childeServices.length
 
   fpCover.value = notion.value.cover
-  links.value = notion.value.links.map((link) => {
-    const splitedName = link.name.split(' ')
-    return {
-      ...link,
-      splitedName,
-    }
-  }) || []
-}
+  console.log('url: ', url)
 
-isServices = !!link.value.services?.length && link.value.services?.every(({ name = null }) => name) && !!model.length
+  setLinks(notion.value)
+  console.log('links.value for First time: ', links.value)
 
-if (!isServices) {
-  const { pending, data: services } = await useLazyAsyncData(
-    'services',
-    () => notionFetch('/services?db_id=d4af2b073c0e4d9ea64f85b72a23db0c'),
-  )
+  notionStore.setChildeServices(notion.value.childeServices)
+  console.log('childeServices.value: ', childeServices.value)
 
   // When query string changes, refresh
-  watch(() => services.value, async(a, b) => {
-    refresh()
-  })
+  watch(() => childeServices.value, async (a, b) => {
+    try {
+      console.log('new childeServices: ', a, 'old childeServices: ', b)
+      const noChildeServices = !a?.length
+      if (noChildeServices)
+        return
 
-  isPending.value = pending
-  const createBgColor = (suffix) => {
-    return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
-  }
+      const isSame = a?.join() === b?.join()
+      if (isSame)
+        return
 
-  links.value.forEach((link) => {
-    services.value?.forEach((s, i) => {
-      const serviceIndex = link.services.findIndex(({ id }) => s.id === id)
-      const itemClass = createBgColor(s.imgUrl || i)
+      console.log('=== REFRESHING DATA ===')
+      const query = a?.length ? `?db_id=${a.join('?db_id=')}` : ''
+      console.log('query: ', query)
 
-      if (serviceIndex !== -1)
-        link.services[serviceIndex] = { ...s, itemClass }
-    })
-  })
+      url = `/services${query}`
+
+      await refresh()
+
+      if (error.value)
+        errorHandler(error.value)
+
+      isPending.value = pending
+
+      // watch(() => childeServices.value, (a, b) => {
+      //   console.log('old: ', a)
+      //   console.log('new: ', b)
+      //   // await refresh()
+      // }, { deep: true })
+
+      // console.log('links.value: ', links.value)
+
+      services = notion.value
+
+      setLinks(notion.value)
+
+      // When query string changes, refresh
+      if (notion?.value?.childeServices)
+        notionStore.setChildeServices(notion.value.childeServices)
+    }
+    catch (error) {
+      console.error('ERROR MESSAGE: ', error.message)
+    }
+  }, { deep: true, immediate: true })
 }
+
+isLinks = !!useObjcectLength(links.value)
 
 const rightNavigation = [
   {
@@ -98,41 +148,50 @@ const rightNavigation = [
   },
 ]
 const generatedKey = str => useGeneratedKey(str)
+
+useHead({
+  titleTemplate: 'U-Servce - %s',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  charset: 'utf-8',
+  meta: [
+    { hid: 'description', name: 'description', content: `My page's ${name} description` },
+  ],
+  link: [
+    {
+      rel: 'icon', type: 'image/png', href: '/U-Service.png',
+    },
+  ],
+  htmlAttrs: {
+    lang: 'hy',
+  },
+})
 </script>
 
 <template>
   <NuxtLayout :name="$device.isDesktopOrTablet ? 'default' : 'mobile'">
     <Html lang="hy">
-
-    <Head>
-      <Meta name="description" :content="`My page's ${name} description`" />
-    </Head>
-    <!-- <Link v-if="!!linkRels.length" v-for="({ imgUrl, path }) in linkRels" :key="generatedKey(`${path}-avif`)"
-      rel="preload" :href="imgUrl" as="image" /> -->
-
+      <Head>
+        <Meta name="description" :content="`My page's ${name} description`" />
+      </Head>
     </Html>
     <!-- HEADER -->
     <template #logo>
       <r-logo :width="245" class="md:mt-0">
         <template #img>
-          <img class="cursor-pointer bg-contain" src="/U-Service-full.png" />
+          <img class="cursor-pointer bg-contain" src="/U-Service-full.png">
         </template>
       </r-logo>
     </template>
 
-    <!-- <template #nav v-if="name">
-      <r-top-navigation v-show="$device.isDesktop" routes-prefix="model" :routes="links" :center="true">
-      </r-top-navigation>
-    </template> -->
-
     <template #header-right>
-      <r-top-navigation v-show="$device.isDesktop && links?.length" :routes="rightNavigation" :padding-r="32"
-        class="text-light-100">
-      </r-top-navigation>
+      <r-top-navigation
+        v-if="!$device.isMobile && isLinks" :routes="rightNavigation" :padding-r="32"
+        class="text-light-100"
+      />
       <!-- MOBILE BUTTON -->
-      <div v-if="$device.isMobile" class="flex items-center text min-h-13.5 min-w-19.9775 w-19.9775 pr-5 pb-2">
-        <r-link-button @click="onClick" class="text-light-100 bg-dark-50">Ցանկ</r-link-button>
-      </div>
+      <r-link-button v-else class="text-light-100 bg-dark-50 mr-5" @click="onClick">
+        Ծառայություններ
+      </r-link-button>
     </template>
     <!-- END HEADER -->
 

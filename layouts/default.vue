@@ -1,8 +1,9 @@
 <script setup>
+import { storeToRefs } from 'pinia'
 /* eslint-disable no-console */
 const route = useRoute()
 const pending = usePending()
-const sidebar = useSidebar()
+const { isHidden } = storeToRefs(useStore())
 
 const nuxtApp = useNuxtApp()
 const loading = useLoading()
@@ -16,40 +17,42 @@ nuxtApp.hook('page:finish', () => {
   console.log('loading.value: ', loading.value)
 })
 
-// const zIndex = computed(() => {
-//   console.log('sidebar.value: ', sidebar.value)
-//   return sidebar.value ? 'z-50' : 'z-0'
-// })
-
 const { $device } = useNuxtApp()
 
 const isDesktopOrTablet = $device.isDesktop
 const backgroundImg = computed(() => {
   const bg = useBackgroundImg()
-  if (!bg.value) useMyBackgoundImg()
+  if (!bg.value)
+    useMyBackgroundImg()
 
   return bg.value
 })
 
 watch(() => route.fullPath, (a, b) => {
-  if (a !== b) useMyBackgoundImg()
+  if (a !== b)
+    useMyBackgroundImg()
 })
-
 </script>
 
 <template>
-  <div :style="`background-image: url('${backgroundImg}');`"
-    class="box-border flex flex-col md:items-center h-full w-full bg-current bg-center bg-cover bg-fixed bg-center">
+  <div
+    v-if="backgroundImg" :style="`background-image: url('${backgroundImg}');`"
+    class="box-border flex flex-col md:items-center h-full w-full bg-current bg-center bg-cover bg-fixed bg-center"
+  >
     <!-- sidebar -->
-    <r-side-nav v-if="isDesktopOrTablet && sidebar"></r-side-nav>
+    <r-side-nav v-if="isDesktopOrTablet && isHidden && !pending" />
 
     <!-- header -->
-    <header v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
+    <header
+      v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
       class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 bg-dark-50"
-      style="min-height: 54px; min-width: 100%;">
-      <div v-if="!!$slots.logo" id="logo"
+      style="min-height: 54px; min-width: 100%;"
+    >
+      <div
+        v-if="!!$slots.logo" id="logo"
         class="flex items-center pl-6 md:pl-8 w-61.25 min-h-13.5 max-h-[54px]"
-        style="max-height: 54px;">
+        style="max-height: 54px;"
+      >
         <slot name="logo" />
       </div>
 
@@ -64,17 +67,21 @@ watch(() => route.fullPath, (a, b) => {
 
     <ClientOnly>
       <Teleport to="body">
-        <div v-if="loading"
-          class="absolute top-0 left-0 bg-white w-screen h-full backdrop-blur-sm opacity-25 flex items-center justify-center mx-auto pa-4 z-40">
+        <div
+          v-if="loading"
+          class="absolute top-0 left-0 bg-white w-screen h-full backdrop-blur-sm opacity-25 flex items-center justify-center mx-auto pa-4 z-40"
+        >
           <div class=" flex justify-center items-center">
-            <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
           </div>
         </div>
       </Teleport>
     </ClientOnly>
 
-    <footer v-if="$slots.footer"
-      class="grid grid-cols-3 gap-4 px-4 w-fill h-18.75 bg-dark text-center text-white items-center content-center b-0 fixed bottom-0 left-0 right-0 z-10">
+    <footer
+      v-if="$slots.footer"
+      class="grid grid-cols-3 gap-4 px-4 w-fill h-18.75 bg-dark text-center text-white items-center content-center b-0 fixed bottom-0 left-0 right-0 z-10"
+    >
       <slot name="footer" />
     </footer>
   </div>

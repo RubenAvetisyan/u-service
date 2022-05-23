@@ -3,7 +3,8 @@ import type { ServerResponse } from 'http'
 import { useQuery } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link, SetRelationFilter } from '../utils/notion-db-query'
-import { Notion, getLinksFromResults, query, setRelationFilter } from '../utils/notion-db-query'
+import { Notion, getLinksFromResults, query, retrieveDb, setRelationFilter } from '../utils/notion-db-query'
+import { filterByObjectKey } from '../utils/helpers'
 
 interface Filters {
   filter: {
@@ -15,28 +16,66 @@ const filters: Filters = {
   filter: {},
 }
 
-const notion = new Notion(process.env.NOTION_API_KEY)
+interface Query {
+  db_id?: string
+  services?: string[]
+  parent?: string | null
+}
 
-export default async(req, res: ServerResponse): Promise<{ links: Link[] } | [] | {}[]> => {
-  const links: Link[] = []
+const NOTION_API_KEY = process.env.NOTION_API_KEY
+
+const notion = NOTION_API_KEY ? new Notion(NOTION_API_KEY) : null
+
+export default async (req: any, res: ServerResponse): Promise<any> => {
+  if (!notion) {
+    res.statusCode = 400
+    res.end()
+    return throwError('😱 Something goes wrong!!!')
+  }
+  const links: Link | {} = {}
   try {
     if (req.method === 'GET') {
-      const q: { db_id?: string; services?: string[]; parent?: string | null } = useQuery(req)
+      console.log('==== Service Call ====')
+      const q: Query = useQuery(req)
       console.log('q: ', q)
-      const retrieve = await notion.client.databases.retrieve({ database_id: q.db_id })
-      console.log('retrieve: ', retrieve)
 
-      if (!q || Object.keys(q).length === 0) return []
+      if (!q?.db_id || !Reflect.ownKeys(q).length)
+        return {}
+
       filters.filter.and = setRelationFilter(q.parent ? { parent: [q.parent] } : { children: q.services || [] })
       console.log('filters: ', filters)
-      const [retrive, results] = await query(notion.client, q.db_id, filters) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
+      const [{ properties: retrive = [] }, { results }] = await Promise.all([
+        retrieveDb(notion.client, q.db_id),
+        query(notion.client, q.db_id),
+      ]) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
       console.log('retrive: ', retrive)
       console.log('results: ', results)
 
-      const links = await getLinksFromResults(results)
-      // links = links.filter(({ id }) => q.services.includes(id))
+      const childeServices = filterByObjectKey(
+        retrive,
+        'db_child_',
+        (result: [key: string, val: any][]) => {
+          result.map(([key, val]): { key: string; value: Record<string, any> } => {
+            if (val.relation?.database_id)
+              return val.relation.database_id
 
-      return links
+            return { key, value: val }
+          })
+        },
+      )
+      // console.log('childeServices: ', childeServices)
+
+      const parentService = filterByObjectKey(
+        retrive,
+        'db_parent_',
+        (result: [key: string, val: any][]) => result.map(([_, val]) => {
+          return val.relation.database_id
+        }),
+      ) as string[]
+
+      const links = await getLinksFromResults(results, parentService[0])
+
+      return { links, childeServices }
     }
     else {
       // Todo: handle post

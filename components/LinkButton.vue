@@ -1,6 +1,4 @@
-
 <script setup>
-
 defineProps({
   path: {
     type: String,
@@ -16,7 +14,7 @@ defineProps({
     active-class="underline font-normal text-white"
   >
     <span class="m-2">
-      <slot></slot>
+      <slot />
     </span>
   </NuxtLink>
 </template>
