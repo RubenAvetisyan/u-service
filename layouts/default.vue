@@ -9,12 +9,10 @@ const nuxtApp = useNuxtApp()
 const loading = useLoading()
 nuxtApp.hook('app:beforeMount', () => {
   loading.value = true
-  console.log('loading.value: ', loading.value)
 })
 
 nuxtApp.hook('page:finish', () => {
   loading.value = false
-  console.log('loading.value: ', loading.value)
 })
 
 const { $device } = useNuxtApp()
@@ -37,7 +35,7 @@ watch(() => route.fullPath, (a, b) => {
 <template>
   <div
     v-if="backgroundImg" :style="`background-image: url('${backgroundImg}');`"
-    class="box-border flex flex-col md:items-center h-full w-full bg-current bg-center bg-cover bg-fixed bg-center"
+    class="box-border flex flex-col md:items-center h-full w-full bg-red-400 bg-current bg-center bg-cover bg-fixed bg-center"
   >
     <!-- sidebar -->
     <r-side-nav v-if="isDesktopOrTablet && isHidden && !pending" />

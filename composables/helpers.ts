@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { H3Error } from 'h3'
+import { storeToRefs } from 'pinia'
 import { useServiceIds } from './states'
 
 /* eslint-disable no-undef */
@@ -20,16 +22,14 @@ export const useCreateBgColor = (suffix: number): string => {
   return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
 }
 
-interface NotionValue {
+export interface NotionValue {
   links: {
     name: string
     splitedName?: string[]
   }[]
 }
 
-export const useNotionLinks = (notionValue: NotionValue) => {
-  console.log('==== useNotionLinks ====')
-  const isLinks = !!useObjcectLength(notionValue?.links)
+export const useNotionLinks = (notionValue: NotionValue) => {  const isLinks = !!useObjcectLength(notionValue?.links)
 
   if (isLinks) {
     Object.entries(notionValue.links).forEach(([_, link]) => {
@@ -49,10 +49,10 @@ export const useNotionLinks = (notionValue: NotionValue) => {
 type Obj = Record<string, any>
 export const useServicesCall = (servicesValue: Obj, links: Obj) => {
   try {
-    console.log('==== Services useLazyAsyncData ====')
+    
     if (!servicesValue || !links)
       return
-    console.log('servicesValue: ', servicesValue)
+    
 
     const vals = Object.entries(servicesValue) as [key: string, value: any][]
     vals.forEach(([key, value]) => {
@@ -63,11 +63,11 @@ export const useServicesCall = (servicesValue: Obj, links: Obj) => {
 
     return links
 
-    // console.log('links: ', links.value)
+    // 
   }
   catch (error: any) {
     if (!error?.value) {
-      console.log('error: ', error)
+      
       return
     }
 
@@ -85,9 +85,7 @@ export function UseSetNavigationLinks(_value: any): void {
   links.value = _value
 }
 
-export function useObjcectLength(_object: {}): number {
-  console.log('Reflect.ownKeys(_object).length: ', !!Reflect.ownKeys(_object).length)
-  return Reflect.ownKeys(_object).length
+export function useObjcectLength(_object: {}): number {  return Reflect.ownKeys(_object).length
 }
 
 function findLink(match: string, service: Obj, links: Obj): void {
@@ -95,4 +93,64 @@ function findLink(match: string, service: Obj, links: Obj): void {
     findLink(match, service, links.services)
   else
     links[service.parentServiceId].services[match] = service
+} 
+
+interface ErrorHandler {
+  value?: string,
+  message?: string
+}
+
+export const useErrorHandler = (error: ErrorHandler | string) => {
+  const errorProp = typeof error === 'object' ? error?.value || error?.message : error
+  const isError = !!errorProp
+  const isErrorTypeSring = typeof error === 'string' || error?.value !== 'string' && typeof error?.message !== 'string'
+
+  if (!isError || !isErrorTypeSring) {
+    return isError
+      ? throwError(`Expected error value to be truethy, but got ${errorProp}`)
+      : throwError(`Expected error to be a typeof "string", but got ${isErrorTypeSring}`)
+  }
+
+  if (process.client && isError && isErrorTypeSring) {
+    throwError(errorProp)
+    clearError()
+  }
+  else {
+    console.error('ERROR MESSAGE while ftching data: ', errorProp)
+  }
+}
+
+export const useSetLinks = async (notionValue: any, url: string) => {
+  return Promise.resolve(setLinks(notionValue, url))
+}
+
+function setLinks(notionValue: any, url: string) {
+  const notionStore = useNotionStore()
+  const { links } = storeToRefs(notionStore)
+
+  if (url.includes('notion')) {
+    notionStore.setMainServices(notionValue)
+  }
+  else {
+    // links.value =
+    notionStore.addServices(notionValue?.links)
+    
+  }
+
+  return links
+}
+// :style="`background-image: url('${backgroundImg}');`"
+
+export const useGetParams = (param: string): string | string[] =>{
+  const route = useRoute()
+  const value = route.params[param]
+  
+  if(value === null) {
+    const paramNotFound = new H3Error()
+    paramNotFound.statusCode = 501
+    paramNotFound.message = `${param} not found on this route. The params for this route are ${JSON.stringify(route.params)}`
+    throw createError(paramNotFound)
+  }
+  
+  return value
 }

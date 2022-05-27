@@ -1,4 +1,5 @@
 // import { booleanLiteral, stringLiteral } from '@babel/types'
+import { booleanLiteral, stringLiteral } from '@babel/types'
 import { defineNuxtConfig } from 'nuxt'
 
 // const isDev = process.env.NODE_ENV === 'development'
@@ -49,12 +50,12 @@ export default defineNuxtConfig({
     classSuffix: '',
   },
 
-  // vite: {
-  //   define: {
-  //     'process.server': booleanLiteral,
-  //     'process.env.BASE_URL': stringLiteral,
-  //     'process.env.NOTION_API': stringLiteral,
-  //     'process.env.NOTION_DATABASE_ID': stringLiteral,
-  //   },
-  // },
+  vite: {
+    define: {
+      'process.server': booleanLiteral,
+      'process.env.BASE_URL': stringLiteral,
+      'process.env.NOTION_API': stringLiteral,
+      'process.env.NOTION_DATABASE_ID': stringLiteral,
+    },
+  },
 })

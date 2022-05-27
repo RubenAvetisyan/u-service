@@ -8,9 +8,9 @@ console.log('path: ', path)
 
 const notionStore = useNotionStore()
 const { links, currentLink } = storeToRefs(notionStore)
-console.log('currentLink: ', currentLink.value)
 
 const link = reactive(currentLink.value)
+console.log('link: ', link);
 
 watch(() => link.value, (n, o) => {
   console.log('new link, old link: ', n, o)
@@ -45,7 +45,7 @@ const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
           <content-anim-link>Անհպում մատակարարում</content-anim-link>
         </h2>
       </div>
-      <pre>{{ link }}</pre>
+      
       <div
         class="flex flex-col md:flex-row place-items-center text-center items-center justify-center md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4"
       >
@@ -63,8 +63,8 @@ const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
 
       <div v-if="isLinks(link?.services || {})" id="contents">
         <div
-          v-for="({ name = '', imgUrl = '', itemClass = '', path = '/', order }, id) in link.services"
-          :id="`content-${id}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
+          v-for="({ name = '', imgUrl = '', itemClass = '', path = '/', order }, id, i) in link.services"
+          :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
           class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex text-center items-center justify-center" :class="[itemClass]"
         >
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
@@ -79,10 +79,10 @@ const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
                 {{ name || `some name ${id}` }}</span>
             </r-home-menu>
           </div>
-          {{ isLastItem(order, link?.services) }} {{ order }}
+          
           <content-chevron-down
-            class="mt-[50vh] md:mt-[65vh] mb-[6vh] absolute rounded-full mx-auto" :class="[isLastItem(order, link?.services) ? 'rotate-180' : null]"
-            @click="() => scrollDown(!isLastItem(order, link?.services) ? `#content-${id}` : '#main-content')"
+            class="mt-[50vh] md:mt-[65vh] mb-[6vh] absolute rounded-full mx-auto" :class="[isLastItem(i, link?.services) ? 'rotate-180' : null]"
+            @click="() => scrollDown(!isLastItem(i, link?.services) ? `#content-${i+1}` : '#main-content')"
           />
         </div>
       </div>

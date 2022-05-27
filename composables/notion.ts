@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { NotionValue } from './helpers'
 
 type Obj = Record<string, any>
 
@@ -13,13 +14,6 @@ export const notionFetch = (url: string, fetchOptions: any = {}) => {
     //   ...fetchOptions.headers,
     // },
   })
-}
-
-interface NotionValue {
-  links: {
-    name: string
-    splitedName?: string[]
-  }[]
 }
 
 interface StateReturn {
@@ -48,47 +42,41 @@ export const useNotionStore = defineStore('notion', {
         const splitedName = link.name.split(' ')
         link.splitedName = splitedName
       })
-
       this.services = { ...links }
       return this.services
     },
     setChildeServices(childeServiceIds: string[]) {
       const childeServices = ref(new Set<string>())
       childeServiceIds.forEach(serviceId => childeServices.value.add(serviceId))
-
       this.childeServices = [...childeServices.value]
-      console.log('this.childeServices: ', this.childeServices)
+
     },
     setQuery(key?: string) {
-      const queryKey = `?${key}=` || '?db_id='
+      const queryKey = key ? `?${key}=` : '?db_id='
       return `${queryKey}${[...this.childeServices].join(queryKey)}`
     },
     addServices(nvl: NotionValue) {
       try {
-        console.log('==== Services useLazyAsyncData ====')
+
         if (!nvl)
           return
-        console.log('nvl: ', nvl)
 
         const vals = Object.entries(nvl) as [key: string, value: any][]
         vals.forEach(([key, value]) => {
           setLink(key, value, this.services)
         })
 
-        console.log('this.services: ', this.services)
         return this.services
       }
       catch (error: any) {
         if (!error?.value) {
-          console.log('error: ', error)
+          console.error('error: ', error)
           return
         }
-
         throwError(new Error(error.value))
       }
     },
   },
-
   getters: {
     links(state) {
       return state.services
@@ -97,20 +85,17 @@ export const useNotionStore = defineStore('notion', {
     currentLink(state) {
       const route = useRoute()
       const path = route?.params?.model?.length ? route.params.model[0] : ''
-
+      console.log('path: ', path);
       if (!path || !this)
         return {}
       const result: Obj = {}
       const services: [key: string, value: Obj][] = Object.entries(this.links)
-      console.log('services: ', services)
-      // const hasValues = (obj: Obj) => useObjcectLength(obj)
 
+      // const hasValues = (obj: Obj) => useObjcectLength(obj)  
       const find = (toFindServices: [key: string, value: Obj][]) => toFindServices.find(([_, value]) => value.path.includes(path))
       const inMain = find(services)
-
       if (inMain?.length)
         return result[inMain[0]] = inMain[1]
-
       const setResult: any = (toFindServices: [key: string, value: Obj][]) => {
         const inServices = find(toFindServices)
         if (inServices?.length)
@@ -118,10 +103,8 @@ export const useNotionStore = defineStore('notion', {
         else
           toFindServices.forEach(s => setResult(Object.entries(s)))
       }
-
       setResult(services)
 
-      console.log('result: ', result)
       return result || {}
     },
   },
@@ -130,7 +113,6 @@ export const useNotionStore = defineStore('notion', {
 function setLink(match: string, service: Obj, links: Obj): void {
   if (!service || !links)
     return
-
   if (!links[service?.parentServiceId]?.services[match])
     setLink(match, service?.services, links?.services)
   else

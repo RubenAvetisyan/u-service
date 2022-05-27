@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable semi */
-export function useScrollIntoParentNextSiblingElement(selector): void {
+export function useScrollIntoParentNextSiblingElement(selector: any): void {
   try {
     const element: Element = document.querySelector(selector)
 

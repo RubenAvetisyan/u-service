@@ -3,7 +3,12 @@
 import { storeToRefs } from 'pinia'
 const route = useRoute()
 
-const { links } = storeToRefs(useNotionStore())
+const notionStore = useNotionStore()
+const { links } = storeToRefs(notionStore)
+
+const isPending = usePending()
+const fpCover = useFpCover()
+
 useMyBackgroundImg()
 const linkRels = useLinkMeta()
 
@@ -20,7 +25,10 @@ useHead({
         <r-home-menu
           v-for="({ path = '/', splitedName = '' }, key) in links"
           :key="`service-block-${splitedName.join('-')}-${key}`"
-          routes-prefix="model" :path="path" color="bg-[#181a1f]" icon="/U-Service.png"
+          routes-prefix="model"
+          :path="path"
+          icon="/U-Service.png"
+          color="bg-[#181a1f]"
           class="flex mx-auto w-40 h-40 ma-2 pa-4 rounded-full"
         >
           <template #first-line>

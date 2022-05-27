@@ -29,106 +29,81 @@ const onClick = () => {
 
 const notionStore = useNotionStore()
 const { links, getChildeServices: childeServices } = storeToRefs(notionStore) // useNavigationLinks()
-console.log('links: ', links)
 
 let isLinks = !!useObjcectLength(links.value)
 
-let isServices = false
-
-const errorHandler = (error) => {
-  if (process.client || process.window) {
-    throwError(new Error(error))
-    clearError()
-  }
-  else {
-    console.error('ERROR MESSAGE while ftching data: ', error.value)
-  }
-}
-
-let url = childeServices.value?.length ? `/services${notionStore.setQuery()}` : '/notion?fp=true'
-const fetch = () => useAsyncData(
-  'notion',
-  () => notionFetch(url, { lazy: true }),
-)
+let url = childeServices.value?.length ? `/services${name ? `${name}` : ''}` : '/notion?fp=true'
 
 let services = null
-const setLinks = (notionValue) => {
-  console.log('notionValue: ', notionValue)
-  if (url.includes('notion')) {
-    notionStore.setMainServices(notionValue)
-  }
-  else {
-    // links.value =
-    notionStore.addServices(notionValue.links)
-    console.log('links.value: ', links.value)
-  }
-}
 
-if (!useObjcectLength(links.value)) {
-  const { pending, data: notion, refresh, error } = await fetch()
+const params = {}
 
-  if (error.value)
-    errorHandler(error.value)
+const { pending, data: notion, refresh, error } = await useLazyAsyncData('notion', () => notionFetch(
+  url, {
+    lazy: true,
+    // transform: (response) => {
+    //   console.log('response: ', response)
+    //   return response
+    // },
+  }))
+// if (!useObjcectLength(links.value) && process.server) {
 
-  isPending.value = pending.value
+if (error.value)
+  useErrorHandler(error.value)
 
-  isServices = !!notion.value.childeServices.length
+isPending.value = pending.value
+if(notion?.value){
+  fpCover.value = notion.value?.cover
 
-  fpCover.value = notion.value.cover
-  console.log('url: ', url)
-
-  setLinks(notion.value)
-  console.log('links.value for First time: ', links.value)
+  useSetLinks(notion.value, url)
 
   notionStore.setChildeServices(notion.value.childeServices)
-  console.log('childeServices.value: ', childeServices.value)
-
-  // When query string changes, refresh
-  watch(() => childeServices.value, async (a, b) => {
-    try {
-      console.log('new childeServices: ', a, 'old childeServices: ', b)
-      const noChildeServices = !a?.length
-      if (noChildeServices)
-        return
-
-      const isSame = a?.join() === b?.join()
-      if (isSame)
-        return
-
-      console.log('=== REFRESHING DATA ===')
-      const query = a?.length ? `?db_id=${a.join('?db_id=')}` : ''
-      console.log('query: ', query)
-
-      url = `/services${query}`
-
-      await refresh()
-
-      if (error.value)
-        errorHandler(error.value)
-
-      isPending.value = pending
-
-      // watch(() => childeServices.value, (a, b) => {
-      //   console.log('old: ', a)
-      //   console.log('new: ', b)
-      //   // await refresh()
-      // }, { deep: true })
-
-      // console.log('links.value: ', links.value)
-
-      services = notion.value
-
-      setLinks(notion.value)
-
-      // When query string changes, refresh
-      if (notion?.value?.childeServices)
-        notionStore.setChildeServices(notion.value.childeServices)
-    }
-    catch (error) {
-      console.error('ERROR MESSAGE: ', error.message)
-    }
-  }, { deep: true, immediate: true })
 }
+
+// When query string changes, refresh
+watch(() => childeServices.value.join(), async (a, b) => {
+  try {
+    // console.log('new childeServices: ', a, 'old childeServices: ', b)
+    const noChildeServices = !a
+    if (noChildeServices)
+      return
+
+    const isSame = a === b
+    
+    if (isSame)
+      return
+
+    url = `/api/services/${name ? `${name}` : ''}${notionStore.setQuery()}`
+
+    // params = notionStore.setQuery()
+
+    services = await notionFetch(
+      url, {
+        lazy: false,
+        // transform: (response) => {
+        //   console.log('response: ', response)
+        //   return response
+        // },
+      })
+
+    if (error.value) {
+      useErrorHandler(error.value)
+      return
+    }
+
+    isPending.value = pending
+
+    useSetLinks(services, url)
+
+    // When query string changes, refresh
+    if (notion?.value?.childeServices)
+      notionStore.setChildeServices(notion.value.childeServices)
+  }
+  catch (error) {
+    console.error('ERROR MESSAGE: ', error.message)
+  }
+}, { deep: true, immediate: true })
+// }
 
 isLinks = !!useObjcectLength(links.value)
 
@@ -162,8 +137,11 @@ useHead({
     },
   ],
   htmlAttrs: {
-    lang: 'hy',
+    lang: 'hy'
   },
+  bodyAttrs: {
+    class:'overflow-y-hidden'
+  }
 })
 </script>
 
@@ -196,6 +174,7 @@ useHead({
     <!-- END HEADER -->
 
     <!-- MAIN -->
+    {{name || 'home'}}
     <NuxtPage />
     <!-- END MAIN -->
 

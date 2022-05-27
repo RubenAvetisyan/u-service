@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ServerResponse } from 'http'
-import { useQuery } from 'h3'
+import { IncomingMessage, useQuery } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
 import { Notion, getLinksFromResults, query, retrieveDb, retrievePage } from '../utils/notion-db-query'
@@ -26,19 +26,30 @@ interface Pages {
   cover: Cover
 }
 
-const notion = new Notion(process.env.NOTION_API_KEY)
+const NOTION_API_KEY = process.env.NOTION_API_KEY
+
+const notion = NOTION_API_KEY ? new Notion(NOTION_API_KEY) : null
 // const { query, getLinksFromResults } = notion
 
 const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID
 const mainPageId = process.env.NOTION_MAIN_PAGE_ID
 
 interface Response {
-  links: Record<string, Link>
-  cover: string
-  childeServices: FilterByObjectKey | []
+  links?: Record<string, Link>
+  cover?: string
+  childeServices?: FilterByObjectKey | []
 }
-export default async (req, res: ServerResponse): Promise<Response> => {
+
+type R = unknown | Response
+export default async (req: IncomingMessage, res: ServerResponse): Promise<R> => {
+  if (!notion) {
+    res.statusCode = 400
+    res.end()
+    return throwError('😱 Something goes wrong!!!')
+  }
+
   let links = {}
+  
   try {
     if (req.method === 'POST') {
       // Todo: handle post
@@ -46,7 +57,6 @@ export default async (req, res: ServerResponse): Promise<Response> => {
       res.end()
     }
     else {
-      console.log('==== Main Call ====')
       const q = useQuery(req)
       let newCover = ''
 
@@ -54,7 +64,7 @@ export default async (req, res: ServerResponse): Promise<Response> => {
         const pages = await retrievePage(notion.client, mainPageId)
         const { cover }: Pages = Object.assign({ cover: null }, pages)
 
-        newCover = cover?.external?.url || cover?.file?.url
+        newCover = cover?.external?.url || cover?.file?.url || ''
       }
       // notion.client.pages.retrive()
       const [{ properties: retrive = [] }, { results }] = await Promise.all([
@@ -62,16 +72,15 @@ export default async (req, res: ServerResponse): Promise<Response> => {
         query(notion.client, database_id),
       ])
 
-      const childeServices = filterByObjectKey(retrive, 'db_child_', result => result.map(([key, val]): Record<string, {}> => {
+      const childeServices = filterByObjectKey(retrive, 'db_child_', (result: [key: string, value: any][]) => result.map(([key, val]): Record<string, {}> => {
         if (val.relation?.database_id)
           return val.relation.database_id
 
         return { key, value: val }
       }))
-      console.log('childeServices: ', childeServices)
-      // console.log('results: ', results)
 
       links = await getLinksFromResults(results)
+      
       return {
         cover: newCover || '',
         links,
@@ -81,10 +90,10 @@ export default async (req, res: ServerResponse): Promise<Response> => {
   }
   catch (error: unknown) {
     if (error instanceof TypeError) {
-      console.log('error: ', error)
+      console.error('error: ', error)
     }
     else {
-      console.log('error: ', error)
+      console.error('error: ', error)
       // notionErrorHandler
       errorHandler(error)
       // eslint-disable-next-line no-undef

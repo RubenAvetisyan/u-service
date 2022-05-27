@@ -10,9 +10,6 @@ defineProps({
 const { sidebarToggle } = useStore()
 
 const links = useNavigationLinks()
-onMounted(() => {
-  console.log('links: ', links)
-})
 
 const { $device } = useNuxtApp()
 
