@@ -6,8 +6,8 @@ const route = useRoute()
 const notionStore = useNotionStore()
 const { links } = storeToRefs(notionStore)
 
-const isPending = usePending()
-const fpCover = useFpCover()
+// const isPending = usePending()
+// const fpCover = useFpCover()
 
 useMyBackgroundImg()
 const linkRels = useLinkMeta()

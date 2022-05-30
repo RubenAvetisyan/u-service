@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 /* eslint-disable no-console */
 const route = useRoute()
 const pending = usePending()
-const { isHidden } = storeToRefs(useStore())
+const { isSidebarHidden } = storeToRefs(useStore())
 
 const nuxtApp = useNuxtApp()
 const loading = useLoading()
@@ -34,11 +34,11 @@ watch(() => route.fullPath, (a, b) => {
 
 <template>
   <div
-    v-if="backgroundImg" :style="`background-image: url('${backgroundImg}');`"
+    :style="`background-image: url('${backgroundImg}');`"
     class="box-border flex flex-col md:items-center h-full w-full bg-red-400 bg-current bg-center bg-cover bg-fixed bg-center"
   >
     <!-- sidebar -->
-    <r-side-nav v-if="isDesktopOrTablet && isHidden && !pending" />
+    <r-side-nav v-if="isDesktopOrTablet && isSidebarHidden && !pending" />
 
     <!-- header -->
     <header

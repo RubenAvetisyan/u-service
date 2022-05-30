@@ -3,18 +3,15 @@
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()
-const path = route?.params?.model?.length ? route.params.model[0] : ''
-console.log('path: ', path)
+
+let path = ''
 
 const notionStore = useNotionStore()
-const { links, currentLink } = storeToRefs(notionStore)
 
-const link = reactive(currentLink.value)
-console.log('link: ', link);
+let getService = notionStore.getServiceByPath
 
-watch(() => link.value, (n, o) => {
-  console.log('new link, old link: ', n, o)
-}, { deep: true, immediate: true })
+
+let link = null
 
 const generatedKey = str => useGeneratedKey(str)
 
@@ -30,14 +27,44 @@ const isModal = ref(false)
 
 const showModal = () => isModal.value = !isModal.value
 
-const isLinks = obj => !!useObjcectLength(obj)
+const isLinks = obj => {
+  const result = !!useObjcectLength(obj)
+  console.log('result: ', result);
+
+  return result
+}
+
+let isLinkServices = null
+
 const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
+
+
+watch(() => route.path, async (n, o) => {
+  console.log('new link, old link: ', n, o)
+  path = useGetLastParam('model')
+  console.log('path: ', path)
+
+  getService = notionStore.getServiceByPath
+  if(path) {
+    link = computed(()=>getService(path))
+    useMyBackgroundImg()
+  }
+
+  console.log('link: ', link);
+
+  isLinkServices = computed(() => {
+    const result = isLinks(link?.services || {})
+    console.log('isLinkServices: ', result);
+
+    return result
+  })
+}, { immediate: true })
 </script>
 
 <template>
   <div class="h-screen justify-between pb-13.75 flex flex-col items-center">
     <div class="snap-start h-screen pt-[calc(13vh+20px)]">
-      <div v-if="isLinks(links || {})" id="main-content" class="text-center">
+      <div id="main-content" class="text-center">
         <NuxtPage class="w-full mx-auto justify-center items-center" />
 
         <h2 class="font-light tracking-wider text-[#5c5d61] text-3.5 pb-2">
@@ -57,20 +84,20 @@ const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
         </content-btn>
       </div>
       <content-chevron-down
-        v-if="isLinks(link?.services || {})" class="mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]"
+        v-if="isLinkServices" class="mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]"
         @click="() => scrollDown('#contents')"
       />
 
-      <div v-if="isLinks(link?.services || {})" id="contents">
+      <div v-if="isLinkServices" id="contents">
         <div
-          v-for="({ name = '', imgUrl = '', itemClass = '', path = '/', order }, id, i) in link.services"
+          v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', order }, id, i) in link.services"
           :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
           class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex text-center items-center justify-center" :class="[itemClass]"
         >
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
             <r-home-menu
               :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
-              :path="path"
+              :path="`/${path}${subPath}`"
               class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center"
             >
               <span

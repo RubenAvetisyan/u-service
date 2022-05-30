@@ -3,7 +3,7 @@
 import { storeToRefs } from 'pinia'
 const route = useRoute()
 const pending = usePending()
-const { isHidden } = storeToRefs(useStore())
+const { isSidebarHidden } = storeToRefs(useStore())
 
 const nuxtApp = useNuxtApp()
 const loading = useLoading()
@@ -36,7 +36,7 @@ watch(() => route.fullPath, (a, b) => {
     class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover bg-fixed"
   >
     <!-- sidebar -->
-    <r-side-nav v-if="isHidden" />
+    <r-side-nav v-if="isSidebarHidden" />
 
     <!-- header -->
     <header

@@ -6,8 +6,8 @@ type Obj = Record<string, any>
 
 export const useFindLink = (serveces?: Obj, path = '') => {
   const links = serveces || storeToRefs(useNotionStore()).links.value
-  const route = !path ? useRoute() : null
-  const match = route?.params?.model?.length && !path ? route.params.model[0] : path
+  const urlPath = useGetFirstParam('model')
+  const match = urlPath && !path ? urlPath : path
 
   let res: {} = find(links, match)
 

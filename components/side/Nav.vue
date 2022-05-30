@@ -1,5 +1,7 @@
 <script setup>
 /* eslint-disable no-console */
+import { storeToRefs } from 'pinia'
+
 defineProps({
   show: {
     type: Boolean,
@@ -8,8 +10,9 @@ defineProps({
 })
 
 const { sidebarToggle } = useStore()
+const notionStore = useNotionStore()
 
-const links = useNavigationLinks()
+const { links } = storeToRefs(notionStore)
 
 const { $device } = useNuxtApp()
 

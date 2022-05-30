@@ -11,13 +11,8 @@ const isPending = usePending()
 const fpCover = useFpCover()
 
 const route = useRoute()
-const model = route?.params?.model
 
-watch(() => model, async (a, b) => {
-  console.log('a, b: ', a, b)
-})
-
-const name = model?.length ? model[0] : ''
+let name = useGetFirstParam('model')
 
 const store = useStore()
 const { sidebarToggle } = store
@@ -32,14 +27,14 @@ const { links, getChildeServices: childeServices } = storeToRefs(notionStore) //
 
 let isLinks = !!useObjcectLength(links.value)
 
-let url = childeServices.value?.length ? `/services${name ? `${name}` : ''}` : '/notion?fp=true'
+let url = ref(name ? `/services/${name ? `${name}` : ''}` : '/notion?fp=true')
 
 let services = null
 
 const params = {}
 
 const { pending, data: notion, refresh, error } = await useLazyAsyncData('notion', () => notionFetch(
-  url, {
+  url.value, {
     lazy: true,
     // transform: (response) => {
     //   console.log('response: ', response)
@@ -55,30 +50,36 @@ isPending.value = pending.value
 if(notion?.value){
   fpCover.value = notion.value?.cover
 
-  useSetLinks(notion.value, url)
+  useSetLinks(notion.value, url.value)
 
-  notionStore.setChildeServices(notion.value.childeServices)
+  notionStore.setChildeServices(notion.value.childeServices, 'mainServices')
 }
 
 // When query string changes, refresh
-watch(() => childeServices.value.join(), async (a, b) => {
+watch(() => route.path, async (newPath, oldPath) => {
   try {
-    // console.log('new childeServices: ', a, 'old childeServices: ', b)
-    const noChildeServices = !a
-    if (noChildeServices)
-      return
+    console.log('new path: ', newPath, 'old path: ', oldPath)
 
-    const isSame = a === b
+    const isSame = newPath === oldPath || newPath === '/' || !!services
     
     if (isSame)
       return
 
-    url = `/api/services/${name ? `${name}` : ''}${notionStore.setQuery()}`
+    name = useGetFirstParam('model')
+    const service = notionStore.getServiceByPath(name)
+    
+    if(service) return
+
+    // const noChildeServices = !useObjcectLength(service?.services || {})
+    // if (noChildeServices)
+    //   return
+
+    url.value = `/api/services/${name ? `${name}${notionStore.setQuery()}` : ''}`
 
     // params = notionStore.setQuery()
 
     services = await notionFetch(
-      url, {
+      url.value, {
         lazy: false,
         // transform: (response) => {
         //   console.log('response: ', response)
@@ -93,11 +94,13 @@ watch(() => childeServices.value.join(), async (a, b) => {
 
     isPending.value = pending
 
-    useSetLinks(services, url)
+    console.log('services: ', services);
+    await useSetLinks(services, url.value)
+    // services = null
 
     // When query string changes, refresh
-    if (notion?.value?.childeServices)
-      notionStore.setChildeServices(notion.value.childeServices)
+    if (services?.childeServices)
+      notionStore.setChildeServices([services.childeServices[0][1]?.relation.database_id], route.path)
   }
   catch (error) {
     console.error('ERROR MESSAGE: ', error.message)
@@ -147,11 +150,11 @@ useHead({
 
 <template>
   <NuxtLayout :name="$device.isDesktopOrTablet ? 'default' : 'mobile'">
-    <Html lang="hy">
+    <!-- <Html lang="hy">
       <Head>
         <Meta name="description" :content="`My page's ${name} description`" />
       </Head>
-    </Html>
+    </Html> -->
     <!-- HEADER -->
     <template #logo>
       <r-logo :width="245" class="md:mt-0">

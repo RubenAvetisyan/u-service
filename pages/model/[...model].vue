@@ -11,7 +11,7 @@ definePageMeta({
 
 const title = useTitle()
 
-const name = route?.params?.model?.length ? route?.params?.model[0] : ''
+const name = useGetFirstParam('model')
 const model = name.replace(/[-\s]/g, ' ') || ''
 
 useHead({

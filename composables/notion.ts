@@ -3,7 +3,6 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { NotionValue } from './helpers'
 
 type Obj = Record<string, any>
-
 export const notionFetch = (url: string, fetchOptions: any = {}) => {
   // eslint-disable-next-line no-undef
   return $fetch(url, {
@@ -18,8 +17,9 @@ export const notionFetch = (url: string, fetchOptions: any = {}) => {
 
 interface StateReturn {
   notionValue: Record<string, any>
-  childeServices: string[]
+  childeServices: {}
   services: Obj
+  servicesByPath: Obj
 }
 
 export const useNotionStore = defineStore('notion', {
@@ -27,8 +27,9 @@ export const useNotionStore = defineStore('notion', {
     return {
       // all these properties will have their type inferred automatically
       notionValue: { links: {} },
-      childeServices: [],
+      childeServices: {},
       services: {},
+      servicesByPath: {},
     }
   },
   actions: {
@@ -45,15 +46,17 @@ export const useNotionStore = defineStore('notion', {
       this.services = { ...links }
       return this.services
     },
-    setChildeServices(childeServiceIds: string[]) {
+    setChildeServices(childeServiceIds: string[], path: string) {
+      if(!path) return
       const childeServices = ref(new Set<string>())
       childeServiceIds.forEach(serviceId => childeServices.value.add(serviceId))
-      this.childeServices = [...childeServices.value]
-
+      this.childeServices = {
+        [path.replace(/\//g, '')]: [...childeServices.value]
+      }
     },
     setQuery(key?: string) {
       const queryKey = key ? `?${key}=` : '?db_id='
-      return `${queryKey}${[...this.childeServices].join(queryKey)}`
+      return `${queryKey}${[...Object.values(this.childeServices)].join(queryKey)}`
     },
     addServices(nvl: NotionValue) {
       try {
@@ -64,6 +67,7 @@ export const useNotionStore = defineStore('notion', {
         const vals = Object.entries(nvl) as [key: string, value: any][]
         vals.forEach(([key, value]) => {
           setLink(key, value, this.services)
+          setServiceByPath(value.path, value, this.servicesByPath)
         })
 
         return this.services
@@ -83,8 +87,7 @@ export const useNotionStore = defineStore('notion', {
     },
     getChildeServices: state => state.childeServices,
     currentLink(state) {
-      const route = useRoute()
-      const path = route?.params?.model?.length ? route.params.model[0] : ''
+      const path = useGetFirstParam('model')
       console.log('path: ', path);
       if (!path || !this)
         return {}
@@ -107,6 +110,17 @@ export const useNotionStore = defineStore('notion', {
 
       return result || {}
     },
+    getServiceByPath(state) {
+      return (path: string) => {
+        console.log('getServiceByPath path: ', path);
+
+        if (!state.servicesByPath[path]) {
+          console.log(`Service by key: ${path} not found`)
+          return undefined
+        }
+        return this.servicesByPath[path]
+      }
+    }
   },
 })
 
@@ -119,5 +133,15 @@ function setLink(match: string, service: Obj, links: Obj): void {
     links[service.parentServiceId].services[match] = service
 }
 
+function setServiceByPath(path: string, service: Obj, links: Obj): void {
+  if (!service || !links)
+    return
+
+  links[path.replace(/\//g, '')] = service
+
+  Object.entries(links[path]?.services || {}).forEach((s: any) => {
+    setServiceByPath(s.path, s?.services, links[path]?.services)
+  })
+}
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useNotionStore, import.meta.hot))
