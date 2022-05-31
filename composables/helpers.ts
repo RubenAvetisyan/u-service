@@ -10,16 +10,6 @@ interface Mylink {
   imgUrl?: Img
 }
 
-export const useMyBackgroundImg = (img: Img = ''): void => {
-  const fpCover = useFpCover()
-  const backgroundImg = useBackgroundImg()
-
-  const path = useGetLastParam('model')
-  const notionStore = useNotionStore()
-  const myLink: Mylink = path ? notionStore.getServiceByPath(path) : undefined
-
-  backgroundImg.value = path ? img || myLink?.imgUrl || '' : fpCover.value
-}
 export const useCreateBgColor = (suffix: number): string => {
   return typeof suffix === 'number' ? `bg-blue-${(suffix + 1) * 100}` : `bg-[url('${suffix}')]`
 }
@@ -32,7 +22,7 @@ export interface NotionValue {
 }
 
 export const useNotionLinks = (notionValue: NotionValue) => {
-  const isLinks = !!useObjcectLength(notionValue?.links)
+  const isLinks = !!useObjcectLength(notionValue?.links || {})
 
   if (isLinks) {
     Object.entries(notionValue.links).forEach(([_, link]) => {
@@ -52,10 +42,8 @@ export const useNotionLinks = (notionValue: NotionValue) => {
 type Obj = Record<string, any>
 export const useServicesCall = (servicesValue: Obj, links: Obj) => {
   try {
-
     if (!servicesValue || !links)
       return
-
 
     const vals = Object.entries(servicesValue) as [key: string, value: any][]
     vals.forEach(([key, value]) => {
@@ -66,13 +54,12 @@ export const useServicesCall = (servicesValue: Obj, links: Obj) => {
 
     return links
 
-    // 
+    //
   }
   catch (error: any) {
-    if (!error?.value) {
+    if (!error?.value)
 
       return
-    }
 
     throwError(new Error(error.value))
   }
@@ -100,14 +87,14 @@ function findLink(match: string, service: Obj, links: Obj): void {
 }
 
 interface ErrorHandler {
-  value?: string,
+  value?: string
   message?: string
 }
 
 export const useErrorHandler = (error: ErrorHandler | string) => {
   const errorProp = typeof error === 'object' ? error?.value || error?.message : error
   const isError = !!errorProp
-  const isErrorTypeSring = typeof error === 'string' || error?.value !== 'string' && typeof error?.message !== 'string'
+  const isErrorTypeSring = typeof error === 'string' || (error?.value === 'string' && typeof error?.message === 'string')
 
   if (!isError || !isErrorTypeSring) {
     return isError
@@ -138,7 +125,6 @@ function setLinks(notionValue: any, url: string) {
   else {
     // links.value =
     notionStore.addServices(notionValue?.links)
-
   }
 
   return links
@@ -157,9 +143,8 @@ export const useGetParams = (param: string): string | string[] => {
   const route = useRoute()
   const value = route.params[param]
 
-  if (value === null) {
+  if (value === null)
     useParamErrorHandler(param, (msg: string) => `${msg} The params for this route are ${JSON.stringify(route.params)}`)
-  }
 
   return value
 }
@@ -171,11 +156,22 @@ export const useGetFirstParam = (paramKey = ''): string => {
 
 export const useGetLastParam = (paramKey = ''): string => {
   const model = useGetParams(paramKey)
-  return model && typeof model !== 'string' ? model[model.length-1] : model || ''
+  return model && typeof model !== 'string' ? model[model.length - 1] : model || ''
 }
 
-function find(_object: Obj, match: string) {
-  return Object.values(_object).find(({ path = '' }) => {
-    return path.includes(match)
-  }) || {}
+// function find(_object: Obj, match: string) {
+//   return Object.values(_object).find(({ path = '' }) => {
+//     return path.includes(match)
+//   }) || {}
+// }
+
+export const useMyBackgroundImg = (img: Img = ''): void => {
+  const fpCover = useFpCover()
+  const backgroundImg = useBackgroundImg()
+
+  const path = useGetLastParam('model')
+  const notionStore = useNotionStore()
+  const myLink: Mylink = path ? notionStore.getServiceByPath(path) : undefined
+
+  backgroundImg.value = path ? img || myLink?.imgUrl || '' : fpCover.value
 }

@@ -27,7 +27,7 @@ const { links, getChildeServices: childeServices } = storeToRefs(notionStore) //
 
 let isLinks = !!useObjcectLength(links.value)
 
-let url = ref(name ? `/services/${name ? `${name}` : ''}` : '/notion?fp=true')
+const url = ref(name ? `/services/${name ? `${name}` : ''}` : '/notion?fp=true')
 
 let services = null
 
@@ -47,7 +47,7 @@ if (error.value)
   useErrorHandler(error.value)
 
 isPending.value = pending.value
-if(notion?.value){
+if (notion?.value) {
   fpCover.value = notion.value?.cover
 
   useSetLinks(notion.value, url.value)
@@ -61,14 +61,15 @@ watch(() => route.path, async (newPath, oldPath) => {
     console.log('new path: ', newPath, 'old path: ', oldPath)
 
     const isSame = newPath === oldPath || newPath === '/' || !!services
-    
+
     if (isSame)
       return
 
-    name = useGetFirstParam('model')
+    name = useGetLastParam('model')
     const service = notionStore.getServiceByPath(name)
-    
-    if(service) return
+
+    // if (service)
+    //   return
 
     // const noChildeServices = !useObjcectLength(service?.services || {})
     // if (noChildeServices)
@@ -87,20 +88,23 @@ watch(() => route.path, async (newPath, oldPath) => {
         // },
       })
 
-    if (error.value) {
-      useErrorHandler(error.value)
-      return
-    }
+    // if (error.value) {
+    //   useErrorHandler(error.value)
+    //   return
+    // }
 
     isPending.value = pending
 
-    console.log('services: ', services);
+    console.log('services: ', services)
     await useSetLinks(services, url.value)
-    // services = null
+    services = null
 
     // When query string changes, refresh
-    if (services?.childeServices)
+    if (services?.childeServices?.length){
       notionStore.setChildeServices([services.childeServices[0][1]?.relation.database_id], route.path)
+      console.log('childeServices: ', notionStore.getChildeServices)
+    }
+      
   }
   catch (error) {
     console.error('ERROR MESSAGE: ', error.message)
@@ -140,11 +144,11 @@ useHead({
     },
   ],
   htmlAttrs: {
-    lang: 'hy'
+    lang: 'hy',
   },
   bodyAttrs: {
-    class:'overflow-y-hidden'
-  }
+    class: 'overflow-y-hidden',
+  },
 })
 </script>
 
@@ -177,7 +181,7 @@ useHead({
     <!-- END HEADER -->
 
     <!-- MAIN -->
-    {{name || 'home'}}
+    {{ name || 'home' }}
     <NuxtPage />
     <!-- END MAIN -->
 

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import type { ServerResponse } from 'http'
-import { defineEventHandler, IncomingMessage } from 'h3'
+import type { IncomingMessage } from 'h3'
+import { defineEventHandler } from 'h3'
 import errorHandler from '../../utils/erroeHandler'
 import type { Link, SetRelationFilter } from '../../utils/notion-db-query'
 import { Notion, getLinksFromResults, query, retrieveDb, setRelationFilter } from '../../utils/notion-db-query'
@@ -40,6 +41,7 @@ export default defineEventHandler(async (event) => {
   try {
     if (req.method === 'GET') {
       const q: Query = useQuery(event.req)
+      console.log('query: ', q)
 
       if (!q?.db_id || !Reflect.ownKeys(q).length)
         return {}
@@ -63,7 +65,7 @@ export default defineEventHandler(async (event) => {
           })
         },
       )
-      // console.log('childeServices: ', childeServices)
+      console.log('childeServices: ', childeServices)
 
       const parentService = filterByObjectKey(
         retrive,

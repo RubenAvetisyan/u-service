@@ -11,47 +11,18 @@ export const useStore = defineStore('storeId', {
         hidden: false,
       },
       meta: {
-        linkMeta: []
-      }
+        linkMeta: [],
+      },
     }
   },
   actions: {
     sidebarToggle() {
       this.sidebar.hidden = !this.sidebar.hidden
     },
-    addLinkMeta(){
-      const store = storeToRefs(useNotionStore())
-      const mainLinks = store.services.value
-    }
   },
 
   getters: {
     isSidebarHidden: state => state.sidebar.hidden,
-    linkMeta: state => {
-      const route = useRoute()
-      const backgroundImg = useBackgroundImg()
-      const linkRels = [{ imgUrl: backgroundImg.value, path: route?.params?.model || route.path }]
-      const store = storeToRefs(useNotionStore())
-      const links = store.links
-
-      const linksValues = Object.values(links.value) as any[]
-
-      if (linksValues.length) {
-        linksValues.forEach(({ imgUrl: linkImgUrl = '', path: linkPath = '', services = {} }) => {
-          linkRels.push({ imgUrl: linkImgUrl, path: linkPath });
-          (Object.values(services) as any[]).forEach(({ imgUrl = '', path = '' }) => {
-            if (imgUrl)
-              linkRels.push({ imgUrl, path })
-          })
-        })
-      }
-      return linkRels.map(({ imgUrl = '' }, i) => ({
-        key: `page-backgound-avif-${i}`,
-        rel: 'preload',
-        href: imgUrl,
-        as: 'image',
-      })).filter(({ href }) => href)
-    }
   },
 })
 

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import type { ServerResponse } from 'http'
-import { IncomingMessage, useQuery } from 'h3'
+import type { IncomingMessage } from 'h3'
+import { useQuery } from 'h3'
 import errorHandler from '../utils/erroeHandler'
 import type { Link } from '../utils/notion-db-query'
 import { Notion, getLinksFromResults, query, retrieveDb, retrievePage } from '../utils/notion-db-query'
@@ -49,7 +50,7 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<R> => 
   }
 
   let links = {}
-  
+
   try {
     if (req.method === 'POST') {
       // Todo: handle post
@@ -80,7 +81,7 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<R> => 
       }))
 
       links = await getLinksFromResults(results)
-      
+
       return {
         cover: newCover || '',
         links,
