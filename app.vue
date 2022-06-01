@@ -52,7 +52,8 @@ if (notion?.value) {
 
   useSetLinks(notion.value, url.value)
 
-  notionStore.setChildeServices(notion.value.childeServices, 'mainServices')
+  console.log('notion.value.childeServices: ', notion.value.childeServices);
+  notionStore.setChildeServices(notion.value.childeServices, notion.value.links)
 }
 
 // When query string changes, refresh
@@ -97,13 +98,16 @@ watch(() => route.path, async (newPath, oldPath) => {
 
     console.log('services: ', services)
     await useSetLinks(services, url.value)
-    services = null
+    
 
     // When query string changes, refresh
+    console.log('services?.childeServices: ', services?.childeServices);
     if (services?.childeServices?.length){
-      notionStore.setChildeServices([services.childeServices[0][1]?.relation.database_id], route.path)
+      notionStore.setChildeServices([services.childeServices], services.links)
       console.log('childeServices: ', notionStore.getChildeServices)
     }
+
+    services = null
       
   }
   catch (error) {

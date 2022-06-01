@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { Client } from '@notionhq/client'
+import { SearchResponse, GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
+import { errorHandler } from './helpers'
 // import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
 
 // interface C { id: string; Name: {}; path: {}; url: string; services?: {}[] }
@@ -29,13 +31,50 @@ export declare interface Link {
 //   getLinksFromResults(results: {}[]): Promise<Link[]>
 // }
 
+type SearFilter = {
+  property: "object";
+  value: "page" | "database";
+} | undefined
+
+type searchSort = {
+  timestamp: "last_edited_time";
+  direction: "ascending" | "descending";
+} | undefined
+
+type SearchStartCursor = string | undefined
+
+interface SearchOptions {
+  filter?: SearFilter
+  sort?: searchSort
+  start_cursor?: SearchStartCursor
+}
+
 export class Notion {
-  client: Client = null
+  client: Client | null = null
 
   constructor(NOTION_API_KEY: string) {
+    if (!NOTION_API_KEY) return errorHandler(501, `Expected NOTION_API_KEY, but got ${NOTION_API_KEY} as ${typeof NOTION_API_KEY}`)
+
     this.client = new Client({
       auth: NOTION_API_KEY,
-    }) || null
+    })
+  }
+
+  async search(query: string, options?: SearchOptions) {
+    if (!this.client) return errorHandler(400, 'notion.so client not found')
+
+    return this.client.search({ query, ...options })
+  }
+
+  searchTransform(searchResult: SearchResponse, cb?: Function) {
+    const result = searchResult.results.map(({ id }) => id)
+    return cb ? cb(searchResult) : result
+  }
+
+  retrivePage(pageId: string){
+    if (!this.client) return errorHandler(400, 'notion.so client not found')
+
+    return this.client.pages.retrieve({ page_id: pageId })
   }
 }
 
@@ -58,27 +97,29 @@ const props = {
   ],
 }
 
-export async function query(client, database_id, options?: { filter: {} }) {
+export async function query(client: any, database_id: string, options?: { filter: {} }) {
   try {
     const filters = options || props
-    return client.databases.query({ database_id, ...filters })
+    const queryResult = client.databases.query({ database_id, ...filters })
+    queryResult.then((res: any) => console.log('queryResult: ', res))
+    return queryResult
   }
   catch (error) {
     console.error('error: ', error)
   }
 }
 
-export async function retrieveDb(client, database_id) {
+export async function retrieveDb(client: any, database_id: string) {
   return client.databases.retrieve({ database_id })
 }
 
-export async function retrievePage(client, page_id) {
+export async function retrievePage(client: any, page_id: string) {
   return await client.pages.retrieve({ page_id })
 }
 
 type ParentId = string
-export async function getLinksFromResults(results, parent_db_Id: ParentId = '') {
-  const links = {}
+export async function getLinksFromResults(results = [], parent_db_Id: ParentId = '') {
+  const links = {} as { [key: string]: any }
   for (let i = 0; i < getLength(results); i++) {
     const { id, parent, archived, properties, url = '', cover }: any = results[i]
 
@@ -120,18 +161,18 @@ export async function getLinksFromResults(results, parent_db_Id: ParentId = '') 
   return links
 }
 
-function getLength(arr) {
-  return arr?.length || undefined
+function getLength(arr: any[]) {
+  return arr?.length || 0
 }
 
-export async function getRelatedServices(relations) {
+export async function getRelatedServices(client: any, relations: { [key: string]: any }[]) {
   console.log('relations: ', relations[0])
   if (!relations)
     return undefined
   const results = await Promise.all(relations.map(async (relation) => {
     const database_id = relation.id
 
-    const database = await query(database_id, props)
+    const database = await query(client, database_id, props)
 
     return getLinksFromResults(database.results)
   }))
@@ -144,22 +185,26 @@ export type SetRelationFilter = {
   relation: {
     contains: string
   }
-}[]
+} | never
 
 interface Relations {
   parent?: string[]
   children?: string[]
+  [key: string]: any
 }
 
-export const setRelationFilter = (relations: Relations): SetRelationFilter => {
-  const and = []
-  const property = Object.keys(relations)[0] === 'parent' ? 'parent_database' : 'child_database'
-  const values = Object.values(relations[Object.keys(relations)[0]])
-  values.forEach((value: string) => and.push({
-    property,
-    relation: {
-      contains: value,
-    },
-  }))
+export const setRelationFilter = (relations: Relations): [] | SetRelationFilter[] => {
+  const and: SetRelationFilter[] = []
+  const property: string = Object.keys(relations)[0] === 'parent' ? 'parent_database' : 'child_database'
+  const values = Object.values(relations[Object.keys(relations)[0]]) as any[]
+  values.forEach((value: string) => {
+    and.push({
+      property,
+      relation: {
+        contains: value,
+      },
+    })
+  })
+
   return and
 }

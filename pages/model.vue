@@ -58,6 +58,10 @@ watch(() => route.path, async (n, o) => {
     return result
   })
 }, { immediate: true })
+
+const getSub = (key)=>{
+  return getService(key)
+}
 </script>
 
 <template>
@@ -102,7 +106,7 @@ watch(() => route.path, async (n, o) => {
               <span
                 class="bg-clip-text font-bold font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1"
               >
-                {{ name || `some name ${id}` }}</span>
+                {{ name || getSub(subPath.replace(/\//g, '')) || `some name ${id}` }}</span>
             </r-home-menu>
           </div>
 
