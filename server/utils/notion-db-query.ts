@@ -101,7 +101,7 @@ export async function query(client: any, database_id: string, options?: { filter
   try {
     const filters = options || props
     const queryResult = client.databases.query({ database_id, ...filters })
-    queryResult.then((res: any) => console.log('queryResult: ', res))
+    
     return queryResult
   }
   catch (error) {
@@ -168,7 +168,7 @@ function getLength(arr: any[]) {
 }
 
 export async function getRelatedServices(client: any, relations: { [key: string]: any }[]) {
-  console.log('relations: ', relations[0])
+  
   if (!relations)
     return undefined
   const results = await Promise.all(relations.map(async (relation) => {

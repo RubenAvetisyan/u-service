@@ -27,12 +27,12 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY
 
 const notion = NOTION_API_KEY ? new Notion(NOTION_API_KEY) : null
 
-console.log()
+
 
 export default defineEventHandler(async (event) => {
   const req: IncomingMessage = event.req
   const res: ServerResponse = event.res
-  console.log('event: ', event)
+
 
   if (!notion) {
     res.statusCode = 400
@@ -43,13 +43,13 @@ export default defineEventHandler(async (event) => {
   try {
     if (req.method === 'GET') {
       const response = await notion.search('services', { filter: { value: 'database', property: 'object' } })
-      console.log('response: ', response);
+
 
       const pageResponse = await notion.retrivePage('c0275da0-c309-4e56-b800-1640a89f5207')
-      console.log('pageResponse: ', pageResponse);
+
 
       const q: Query = useQuery(event.req)
-      console.log('query: ', q)
+
 
       if (!q?.db_id || !Reflect.ownKeys(q).length)
         return {}
@@ -60,9 +60,9 @@ export default defineEventHandler(async (event) => {
         retrieveDb(notion.client, q.db_id),
         query(notion.client, q.db_id),
       ]) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
-      console.log('query results: ', results);
-      
-      const childeServices: any = filterByObjectKey(
+
+
+      let childeServices: any = filterByObjectKey(
         retrive,
         'db_child_',
         (result: [key: string, val: any][]) => {
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
           })
         },
       )
-      console.log('childeServices: ', childeServices)
+
 
       const parentService = filterByObjectKey(
         retrive,
@@ -86,7 +86,9 @@ export default defineEventHandler(async (event) => {
 
       const links = await getLinksFromResults(results, parentService[0])
 
-      return { links, childeServices: childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : [] }
+      childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
+
+      return { links, childeServices }
     }
     else {
       // Todo: handle post
@@ -96,10 +98,10 @@ export default defineEventHandler(async (event) => {
   }
   catch (error: unknown) {
     if (error instanceof TypeError) {
-      console.log('error: ', error)
+
     }
     else {
-      console.log('error: ', error)
+
       // notionErrorHandler
       errorHandler(error)
       // eslint-disable-next-line no-undef

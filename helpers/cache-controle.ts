@@ -5,15 +5,13 @@
 //   }
 // }
 
-export const useCachecontrole = (values?: {}) => ({ res }: {
+export const useCachecontrole = (values = {}) => ({ res }: {
   res: any
 }): void => {
-  if (!process.server || !Reflect.ownKeys(values).length)
+  if (!process.server || !useObjcectLength(values))
     return
-  console.log('process.server ddd: ', process.server)
 
-  console.log('values: ', values)
-  const cacheControlValue: string = Object.entries(values || {})
+  const cacheControlValue: string = Object.entries(values)
     .map(([key, value]) => `${key}=${value}`)
     .join(',')
 

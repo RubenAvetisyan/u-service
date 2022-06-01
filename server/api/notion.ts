@@ -32,8 +32,8 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY
 const notion = NOTION_API_KEY ? new Notion(NOTION_API_KEY) : null
 // const { query, getLinksFromResults } = notion
 
-const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID
-const mainPageId = process.env.NOTION_MAIN_PAGE_ID
+const database_id = process.env.NOTION_DATABASE_MAIN_SECTIONS_ID || ''
+const mainPageId = process.env.NOTION_MAIN_PAGE_ID || ''
 
 interface Response {
   links?: Record<string, Link>
@@ -94,7 +94,6 @@ export default async (req: IncomingMessage, res: ServerResponse): Promise<R> => 
       console.error('error: ', error)
     }
     else {
-      console.error('error: ', error)
       // notionErrorHandler
       errorHandler(error)
       // eslint-disable-next-line no-undef

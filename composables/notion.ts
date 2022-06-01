@@ -5,7 +5,7 @@ import type { NotionValue } from './helpers'
 type Obj = Record<string, any>
 export const notionFetch = (url: string, fetchOptions: any = {}) => {
   // eslint-disable-next-line no-undef
-  console.log('=== Fetching Data ===')
+
   return $fetch(url, {
     baseURL: '/api',
     ...fetchOptions,
@@ -52,18 +52,18 @@ export const useNotionStore = defineStore('notion', {
       })
       return this.services
     },
-    setChildeServices(childeServiceIds: string[], links: { [key: string]: any }) {
-      console.log('childeServiceIds: ', childeServiceIds);
+    setChildeServices(childeServiceIds: string[] = [], links: { [key: string]: any }) {
 
-      if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to b string[].
-      Got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
+
+      if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to be typeof string[],but
+got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
 
       if (!links)
         return
 
       let key = Object.values(links).map(({ path = '' }) => path).join('')
       key = key.split('/').filter(s => s).join('/')
-      console.log('key: ', key);
+
       const childeServices = ref(new Set<string>([...Object.values(this.childeServices[key] || {}).flat()]))
       childeServiceIds.forEach(serviceId => childeServices.value.add(serviceId))
       this.childeServices = { [key]: [...childeServices.value] }
@@ -73,12 +73,12 @@ export const useNotionStore = defineStore('notion', {
       const queryKey = key ? `?${key}=` : '?db_id='
       const path = useGetLastParam('model') || ''
       const childeServices = Object.entries(this.childeServices).find(([key]) => key.includes(path))
-      console.log('setQuery => childeServices: ', childeServices);
+
       if (!childeServices?.length) return ''
       return `${queryKey}${childeServices[1].join(queryKey)}`
     },
     addServices(nvl: NotionValue) {
-      console.log('nvl: ', nvl);
+
       try {
         if (!nvl)
           return
@@ -93,8 +93,7 @@ export const useNotionStore = defineStore('notion', {
       }
       catch (error: any) {
         if (!error?.value) {
-          console.error('error: ', error)
-          return
+          return useErrorHandler(error)
         }
         throwError(new Error(error.value))
       }
@@ -107,7 +106,7 @@ export const useNotionStore = defineStore('notion', {
     getChildeServices: state => state.childeServices,
     currentLink(state) {
       const path = useGetFirstParam('model')
-      console.log('path: ', path)
+
       if (!path || !this)
         return {}
       const result: Obj = {}
@@ -131,10 +130,10 @@ export const useNotionStore = defineStore('notion', {
     },
     getServiceByPath(state) {
       return (path: string) => {
-        console.log('getServiceByPath path: ', path)
+
 
         if (!state.servicesByPath[path]) {
-          console.log(`Service by key: ${path} not found`)
+
           return undefined
         }
 
@@ -157,14 +156,14 @@ function setServiceByPath(serviceKey: string, path: string, service: Obj, links:
   if (!service || !links)
     return
 
-    const key = path.replace(/\//g, '')
+  const key = path.replace(/\//g, '')
 
-  if(!links[key]) links[key] = service
+  if (!links[key]) links[key] = service
 
   let childServicePath = ''
 
   Object.values(links).forEach(link => {
-    if(link.childPaths.includes(path)) {
+    if (link.childPaths.includes(path)) {
       link.services[serviceKey] = service
       childServicePath
     }

@@ -35,12 +35,12 @@ const params = {}
 
 const { pending, data: notion, refresh, error } = await useLazyAsyncData('notion', () => notionFetch(
   url.value, {
-    lazy: true,
-    // transform: (response) => {
-    //   console.log('response: ', response)
-    //   return response
-    // },
-  }))
+  lazy: true,
+  // transform: (response) => {
+  //   
+  //   return response
+  // },
+}))
 // if (!useObjcectLength(links.value) && process.server) {
 
 if (error.value)
@@ -52,14 +52,14 @@ if (notion?.value) {
 
   useSetLinks(notion.value, url.value)
 
-  console.log('notion.value.childeServices: ', notion.value.childeServices);
+
   notionStore.setChildeServices(notion.value.childeServices, notion.value.links)
 }
 
 // When query string changes, refresh
 watch(() => route.path, async (newPath, oldPath) => {
   try {
-    console.log('new path: ', newPath, 'old path: ', oldPath)
+
 
     const isSame = newPath === oldPath || newPath === '/' || !!services
 
@@ -67,7 +67,7 @@ watch(() => route.path, async (newPath, oldPath) => {
       return
 
     name = useGetLastParam('model')
-    const service = notionStore.getServiceByPath(name)
+    // const service = notionStore.getServiceByPath(name)
 
     // if (service)
     //   return
@@ -80,38 +80,29 @@ watch(() => route.path, async (newPath, oldPath) => {
 
     // params = notionStore.setQuery()
 
+    // When route.path string changes, fetching for new data 
     services = await notionFetch(
       url.value, {
-        lazy: false,
-        // transform: (response) => {
-        //   console.log('response: ', response)
-        //   return response
-        // },
-      })
-
-    // if (error.value) {
-    //   useErrorHandler(error.value)
-    //   return
-    // }
+      lazy: false,
+      // transform: (response) => {
+      //   
+      //   return response
+      // },
+    })
 
     isPending.value = pending
 
-    console.log('services: ', services)
     await useSetLinks(services, url.value)
     
-
-    // When query string changes, refresh
-    console.log('services?.childeServices: ', services?.childeServices);
-    if (services?.childeServices?.length){
-      notionStore.setChildeServices([services.childeServices], services.links)
-      console.log('childeServices: ', notionStore.getChildeServices)
-    }
+    if (!services?.childeServices?.length) return console.log('services.childeServices: ', services.childeServices);
+    
+    notionStore.setChildeServices([services.childeServices], services.links)
 
     services = null
-      
+
   }
   catch (error) {
-    console.error('ERROR MESSAGE: ', error.message)
+
   }
 }, { deep: true, immediate: true })
 // }
@@ -173,10 +164,8 @@ useHead({
     </template>
 
     <template #header-right>
-      <r-top-navigation
-        v-if="!$device.isMobile && isLinks" :routes="rightNavigation" :padding-r="32"
-        class="text-light-100"
-      />
+      <r-top-navigation v-if="!$device.isMobile && isLinks" :routes="rightNavigation" :padding-r="32"
+        class="text-light-100" />
       <!-- MOBILE BUTTON -->
       <r-link-button v-else class="text-light-100 bg-dark-50 mr-5" @click="onClick">
         Ծառայություններ

@@ -1,4 +1,7 @@
 /* eslint-disable no-console */
+
+import { TypeReferenceType } from "typescript"
+
 /* eslint-disable semi */
 export function useScrollIntoParentNextSiblingElement(selector: any): void {
   try {
@@ -12,7 +15,7 @@ export function useScrollIntoParentNextSiblingElement(selector: any): void {
       behavior: 'smooth',
     })
   }
-  catch (err) {
-    console.error('error: ', err)
+  catch (err: any) {
+    useErrorHandler(err)
   }
 }
