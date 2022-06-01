@@ -60,7 +60,8 @@ export default defineEventHandler(async (event) => {
         retrieveDb(notion.client, q.db_id),
         query(notion.client, q.db_id),
       ]) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
-
+      console.log('query results: ', results);
+      
       const childeServices: any = filterByObjectKey(
         retrive,
         'db_child_',

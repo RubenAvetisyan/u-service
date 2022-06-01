@@ -47,8 +47,8 @@ export const useNotionStore = defineStore('notion', {
         link.splitedName = splitedName
       })
       this.services = { ...links }
-      Object.values(links).forEach(service => {
-        setServiceByPath(service.path, service, this.servicesByPath)
+      Object.entries(links).forEach(([key, service]) => {
+        setServiceByPath(key, service.path, service, this.servicesByPath)
       })
       return this.services
     },
@@ -85,8 +85,8 @@ export const useNotionStore = defineStore('notion', {
 
         const vals = Object.entries(nvl) as [key: string, value: any][]
         vals.forEach(([key, value]) => {
-          setLink(key, value, this.services)
-          setServiceByPath(value.path, value, this.servicesByPath)
+          // setLink(key, value, this.services)
+          setServiceByPath(key, value.path, value, this.servicesByPath)
         })
 
         return this.services
@@ -153,20 +153,34 @@ function setLink(match: string, service: Obj, links: Obj): void {
     links[service.parentServiceId].services[match] = service
 }
 
-function setServiceByPath(path: string, service: Obj, links: Obj): void {
+function setServiceByPath(serviceKey: string, path: string, service: Obj, links: Obj): void {
   if (!service || !links)
     return
 
-  links[path.replace(/\//g, '')] = service
+    const key = path.replace(/\//g, '')
 
-  interface Obj {
-    [key: string]: any
-  }
+  if(!links[key]) links[key] = service
 
-  Object.entries(links[path]?.services || {}).forEach(([key, value]: [string, any]) => {
-    if(links[path]?.services) links[path].services[key] = value
-    setServiceByPath(value.path, value?.services, links[path]?.services)
+  let childServicePath = ''
+
+  Object.values(links).forEach(link => {
+    if(link.childPaths.includes(path)) {
+      link.services[serviceKey] = service
+      childServicePath
+    }
   })
+
+  // links[key]
+
+
+  // interface Obj {
+  //   [key: string]: any
+  // }
+
+  // Object.entries(links[path]?.services || {}).forEach(([key, value]: [string, any]) => {
+  //   // if(links[path]?.services) links[path].services[key] = value
+  //   setServiceByPath(value.path, value?.services, links[path]?.services)
+  // })
 }
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useNotionStore, import.meta.hot))

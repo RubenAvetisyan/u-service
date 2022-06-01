@@ -71,7 +71,7 @@ export class Notion {
     return cb ? cb(searchResult) : result
   }
 
-  retrivePage(pageId: string){
+  retrivePage(pageId: string) {
     if (!this.client) return errorHandler(400, 'notion.so client not found')
 
     return this.client.pages.retrieve({ page_id: pageId })
@@ -131,6 +131,7 @@ export async function getLinksFromResults(results = [], parent_db_Id: ParentId =
     // })) as string[]
 
     const dbImgUrls = properties?.img_url?.files || null
+    const childPaths = properties.child_props?.rollup.array.map(({ url }: any) => url) || []
 
     links[id] = {
       parent_db_Id: '',
@@ -138,6 +139,7 @@ export async function getLinksFromResults(results = [], parent_db_Id: ParentId =
       parentServiceId: '',
       name: properties.Name.title[0].text.content,
       path: properties?.path?.url,
+      childPaths,
       imgUrl: cover?.external?.url || cover?.file?.url,
       dbImgUrl: dbImgUrls?.length ? dbImgUrls[0].external?.url : '',
       services: {},
