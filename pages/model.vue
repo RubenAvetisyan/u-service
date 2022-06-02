@@ -8,7 +8,7 @@ let path = ''
 
 const notionStore = useNotionStore()
 
-let getService = notionStore.getServiceByPath
+const getService = notionStore.getServiceByPath
 
 let link = ref(null)
 
@@ -40,8 +40,7 @@ watch(() => route.path, async (n, o) => {
 
   if (n === '/') return
   path = useGetLastParam('model')
-
-  getService = notionStore.getServiceByPath
+  
   if (path) {
     link.value = getService(path)
     useMyBackgroundImg()
@@ -54,10 +53,6 @@ watch(() => route.path, async (n, o) => {
     return result
   })
 }, { immediate: true })
-
-const getSub = (key) => {
-  return getService(key)
-}
 </script>
 
 <template>
@@ -95,7 +90,7 @@ const getSub = (key) => {
               class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
               <span
                 class="bg-clip-text font-bold font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1">
-                {{ name || getSub(subPath.replace(/\//g, '')) || `some name ${id}` }}</span>
+                {{ name }}</span>
             </r-home-menu>
           </div>
 

@@ -1,6 +1,7 @@
 <script setup>
 /* eslint-disable no-console */
 import { storeToRefs } from 'pinia'
+import DarkToggle from './components/DarkToggle.vue';
 
 definePageMeta({
   layout: false,
@@ -93,9 +94,9 @@ watch(() => route.path, async (newPath, oldPath) => {
     isPending.value = pending
 
     await useSetLinks(services, url.value)
-    
-    if (!services?.childeServices?.length) return console.log('services.childeServices: ', services.childeServices);
-    
+
+    if (!services?.childeServices?.length) return
+
     notionStore.setChildeServices([services.childeServices], services.links)
 
     services = null
@@ -108,6 +109,8 @@ watch(() => route.path, async (newPath, oldPath) => {
 // }
 
 isLinks = !!useObjcectLength(links.value)
+
+const { $device: device } = useNuxtApp()
 
 const rightNavigation = [
   {
@@ -124,6 +127,14 @@ const rightNavigation = [
     onClick,
   },
 ]
+
+const rn = computed(() => {
+  return !device.isMobile ? rightNavigation : [{
+    path: '',
+    name: 'Ծառայություններ',
+    onClick,
+  }]
+})
 const generatedKey = str => useGeneratedKey(str)
 
 useHead({
@@ -164,17 +175,19 @@ useHead({
     </template>
 
     <template #header-right>
-      <r-top-navigation v-if="!$device.isMobile && isLinks" :routes="rightNavigation" :padding-r="32"
-        class="text-light-100" />
+      <r-top-navigation v-if="isLinks" :routes="rn" :padding-r="32" class="dark:text-light-100 text-dark-100" />
       <!-- MOBILE BUTTON -->
-      <r-link-button v-else class="text-light-100 bg-dark-50 mr-5" @click="onClick">
+      <!-- <r-link-button v-else class="dark:text-light-100 text-dark-100 bg-dark-50 mr-5" @click="onClick">
         Ծառայություններ
-      </r-link-button>
+      </r-link-button> -->
+    </template>
+
+    <template #color-mode>
+      <DarkToggle class="w-6 min-w-6" />
     </template>
     <!-- END HEADER -->
 
     <!-- MAIN -->
-    {{ name || 'home' }}
     <NuxtPage />
     <!-- END MAIN -->
 
@@ -183,3 +196,19 @@ useHead({
     <!-- END FOOTER -->
   </NuxtLayout>
 </template>
+
+<style>
+html,
+body,
+#__nuxt {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html.dark {
+  background: #222;
+  color: white;
+}
+</style>

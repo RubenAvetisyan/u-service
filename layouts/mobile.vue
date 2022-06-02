@@ -9,13 +9,15 @@ const nuxtApp = useNuxtApp()
 const loading = useLoading()
 nuxtApp.hook('app:beforeMount', () => {
   loading.value = true
-  console.log('loading.value: ', loading.value)
+  // console.log('loading.value: ', loading.value)
 })
 
 nuxtApp.hook('page:finish', () => {
   loading.value = false
-  console.log('loading.value: ', loading.value)
+  // console.log('loading.value: ', loading.value)
 })
+
+const { $device } = nuxtApp
 const backgroundImg = computed(() => {
   const bg = useBackgroundImg()
   if (!bg.value)
@@ -31,54 +33,48 @@ watch(() => route.fullPath, (a, b) => {
 </script>
 
 <template>
-  <div
-    :style="`background-image: url('${backgroundImg}');`"
-    class="flex flex-col items-center h-screen w-screen bg-current bg-center bg-cover bg-fixed"
-  >
+  <div class="box-border flex flex-col md:items-center h-full w-full">
+    <div :style="`background-image: url('${backgroundImg}');`"
+      class="fixed z-0 top-0 left-0 z-0 h-full w-full bg-current bg-center bg-cover bg-fixed bg-center opacity-37">
+    </div>
     <!-- sidebar -->
-    <r-side-nav v-if="isSidebarHidden" />
+    <r-side-nav v-if="isSidebarHidden && !pending" />
 
     <!-- header -->
-    <header
-      v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
-      class="justify-center h-13.5 z-10 flex md:flex-wrap justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 bg-dark-50"
-      style="min-height: 54px; min-width: 100%;"
-    >
-      <div
-        v-if="!!$slots.logo" id="logo"
-        class="flex items-center pl-6 md:pl-8 w-61.25 min-h-13.5 max-h-[54px] overflow-hidden"
-        style="max-height: 34px;"
-      >
+    <header v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
+      class="z-20 justify-center h-13.5 z-10 flex justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 dark:bg-opacity-70 bg-dark-50 dark:bg-blue-gray-900"
+      style="min-height: 54px; min-width: 100%;">
+      <div v-if="!!$slots.logo" id="logo" class="flex items-center pl-6 md:pl-8 min-h-13.5 max-h-[54px]"
+        style="max-height: 54px;">
         <slot name="logo" />
       </div>
 
-      <slot name="nav" />
+      <div :class="['flex h-13.5 lg:w-3/7']">
+        <slot name="nav" />
+      </div>
 
       <slot name="header-right" />
+      <slot name="color-mode"></slot>
     </header>
 
-    <main class="w-screen h-screen">
+    <main class="z-10 snap-y snap-mandatory overflow-y-scroll overflow-x-hidden w-full h-screen">
       <slot />
     </main>
 
-    <footer
-      v-if="$slots.footer"
-      class="grid grid-cols-3 gap-4 px-4 w-fill h-18.75 bg-dark text-center text-white items-center content-center b-0 fixed bottom-0 left-0 right-0 z-10"
-    >
-      <slot name="footer" />
-    </footer>
-
     <ClientOnly>
       <Teleport to="body">
-        <div
-          v-if="loading"
-          class="absolute top-0 left-0 bg-white w-screen h-full backdrop-blur-sm opacity-25 flex items-center justify-center mx-auto pa-4 z-40"
-        >
+        <div v-if="loading"
+          class="absolute top-0 left-0 bg-white w-screen h-full backdrop-blur-sm opacity-25 flex items-center justify-center mx-auto pa-4 z-40">
           <div class=" flex justify-center items-center">
             <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
           </div>
         </div>
       </Teleport>
     </ClientOnly>
+
+    <footer v-if="$slots.footer"
+      class="grid grid-cols-3 gap-4 px-4 w-fill h-18.75 bg-dark text-center text-white items-center content-center b-0 fixed bottom-0 left-0 right-0 z-10">
+      <slot name="footer" />
+    </footer>
   </div>
 </template>
