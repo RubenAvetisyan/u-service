@@ -24,9 +24,3 @@ useHead({
     <content-model :model="title" />
   </div>
 </template>
-
-<style>
-#__nuxt>div {
-  background-color: #fff;
-}
-</style>

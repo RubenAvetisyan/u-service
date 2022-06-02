@@ -28,7 +28,7 @@ const hide = () => {
   useSidebarToggle()
   sidebarToggle()
   loading.value = true
-  console.log('loading.value: ', loading.value)
+  // console.log('loading.value: ', loading.value)
 }
 </script>
 
