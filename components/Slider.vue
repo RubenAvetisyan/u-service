@@ -14,7 +14,10 @@ const setSlide = (id) => {
 
   if (!el) return
 
+  const {x} = el.getBoundingClientRect();
+
   el.scrollIntoView({
+    x, y: 0,
     behavior: 'smooth',
     block: 'center'
   })
