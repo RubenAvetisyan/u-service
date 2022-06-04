@@ -6,23 +6,10 @@ const props = defineProps({
   }
 })
 
-const parentElement = ref(null)
-const currentElement = ref(null)
-const previousElement = ref(null)
-
-let toggle = (currentIndex, nextIndex) => {
-  [currentIndex, nextIndex].forEach(index => {
-    parentElement.value.children[index].classList.toggle('hidden')
-    parentElement.value.children[index].classList.toggle('-translate-x-1/2')
-  })
-  console.log('currentIndex: ', parentElement.value.children[currentIndex]);
-  console.log('nextIndex: ', parentElement.value.children[nextIndex]);
-}
-
 const imagesLastIndex = props.images.length - 1
 let index = ref(0)
 
-const setIndex = (id) => {
+const setSlide = (id) => {
   let el = document.querySelector(`#image-slide-${id}`)
 
   if (!el) return
@@ -34,14 +21,6 @@ const setIndex = (id) => {
 }
 
 const direction = ref('next')
-setInterval(() => {
-  if (direction === 'next') {
-    index.value = 0
-    incIndex()
-  } else {
-    decIndex()
-  }
-}, 2500)
 
 const incIndex = () => {
   if (index.value !== 0 && index.value > imagesLastIndex) {
@@ -52,10 +31,10 @@ const incIndex = () => {
   }
 
   const nextIndex = index.value
-  setIndex(nextIndex)
+  setSlide(nextIndex)
 }
 const decIndex = () => {
-  if (index.value !== 0 && index.value < 0) {
+  if (index.value < 0) {
     index.value = 0
     direction.value = 'next'
   } else {
@@ -63,8 +42,28 @@ const decIndex = () => {
   }
 
   const nextIndex = index.value
-  setIndex(nextIndex)
+  setSlide(nextIndex)
 }
+let interval = null
+let timeout = null
+onMounted(() => {
+  interval = window.setInterval(() => {
+    if (direction.value === 'next') {
+      incIndex()
+    } else {
+      decIndex()
+    }
+  }, 2500)
+
+  // timeout = window.setTimeout(()=> {
+  //   window.clearInterval(interval)
+  //   interval = null
+  //   console.log("🚀 ~ file: Slider.vue ~ line 56 ~ timeout ~ interval", interval)
+  //   timeout = null
+  // },  3000)
+})
+
+onBeforeUnmount(()=>window.clearInterval(interval))
 </script>
 
 <template>
@@ -84,7 +83,7 @@ const decIndex = () => {
     </div>
     <!-- Slider indicators -->
     <div class="flex absolute bottom-5 left-1/2 z-30 gap-3 -translate-x-1/2">
-      <button v-for="(image, i) in images" :key="`slide-button-${i}`" type="button" @click.stop="() => setIndex(i)"
+      <button v-for="(image, i) in images" :key="`slide-button-${i}`" type="button" @click.stop="() => setSlide(i)"
         class="shrink-0 w-3 h-3 rounded-full bg-light-100 backdrop-blur-sm opacity-25 light:opacity-50 space-y-3"
         aria-current="false" :aria-label="`Slide ${i}`"></button>
     </div>

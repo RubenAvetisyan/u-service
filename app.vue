@@ -3,6 +3,8 @@
 import { storeToRefs } from 'pinia'
 import DarkToggle from './components/DarkToggle.vue';
 
+const nuxtApp = useNuxtApp()
+
 definePageMeta({
   layout: false,
   keepalive: true,
