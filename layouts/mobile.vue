@@ -26,23 +26,35 @@ const backgroundImg = computed(() => {
   return bg.value
 })
 
+const path = ref(!!useGetFirstParam('model'))
+
+const mainClass = ref('')
+const backgroundImageOpacity = ref(!path.value ? 'opacity-37' : 'opacity-80')
+
 watch(() => route.fullPath, (a, b) => {
   if (a !== b)
     useMyBackgroundImg()
+
+  path.value = !!useGetFirstParam('model')
+
+  mainClass.value = path.value ? 'snap-y snap-mandatory' : ''
+  backgroundImageOpacity.value = !path.value ? 'opacity-37' : 'opacity-80'
+  
+  console.log('mainClass: ', mainClass.value);
 })
 </script>
 
 <template>
   <div class="box-border flex flex-col md:items-center h-full w-full">
     <div :style="`background-image: url('${backgroundImg}');`"
-      class="fixed z-0 top-0 left-0 z-0 h-full w-full bg-current bg-center bg-cover bg-fixed bg-center opacity-37">
+      :class="['fixed z-0 top-0 left-0 h-full w-full bg-current bg-center bg-cover bg-fixed bg-center', backgroundImageOpacity]">
     </div>
     <!-- sidebar -->
     <r-side-nav v-if="isSidebarHidden && !pending" />
 
     <!-- header -->
     <header v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
-      class="z-20 justify-center h-13.5 z-10 flex justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 dark:bg-opacity-70 bg-dark-50 dark:bg-blue-gray-900"
+      class="z-30 justify-center h-13.5 z-10 flex justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-20 dark:bg-opacity-70 bg-dark-50 dark:bg-blue-gray-900"
       style="min-height: 54px; min-width: 100%;">
       <div v-if="!!$slots.logo" id="logo" class="flex items-center pl-6 md:pl-8 min-h-13.5 max-h-[54px]"
         style="max-height: 54px;">
@@ -57,7 +69,7 @@ watch(() => route.fullPath, (a, b) => {
       <slot name="color-mode"></slot>
     </header>
 
-    <main class="z-10 snap-y snap-mandatory overflow-y-scroll overflow-x-hidden w-full h-screen">
+    <main class="z-20 snap-y snap-mandatory overflow-y-scroll overflow-x-hidden w-full h-screen">
       <slot />
     </main>
 
