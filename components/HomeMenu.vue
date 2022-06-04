@@ -40,7 +40,7 @@ const onClick = () => {
 
 <template>
   <NuxtLink :to="!!path ? `${baseUrl}${routesPrefix}${path}` : '/'" :class="[bgColor]"
-    class="group flex-wrap-reverse bg-opacity-35 cursor-pointer overflow-hidden backdrop-blur-sm relative shadow-lg ring-1 ring-black/5 items-center hover:shadow-md hover:shadow-gray-700 dark:hover:shadow-gray-00 hover:dark:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-transparent via-gray-500/50 to-transparent"
+    class="group flex-wrap-reverse bg-opacity-35 cursor-pointer overflow-hidden backdrop-blur-sm relative shadow-lg ring-1 ring-white/5 light:ring-black/5 items-center hover:shadow-md hover:shadow-gray-700 dark:hover:shadow-white hover:light:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-transparent via-gray-500/50 to-transparent"
     @click.stop="onClick">
     <img v-if="background" :src="background" :alt="path"
       class="rounded-full h-full object-cover w-full backdrop-blur-10 opacity-60 transition-all ease-in-out duration-150" width="160px"

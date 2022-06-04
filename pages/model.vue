@@ -59,7 +59,7 @@ watch(() => route.path, async (n, o) => {
   <div class="h-screen justify-between pb-13.75 flex flex-col items-center">
     <div class="snap-start h-screen pt-[calc(13vh+20px)]">
       <div id="main-content" class="text-center">
-        <NuxtPage class="w-full mx-auto justify-center items-center" />
+        <NuxtPage class="dark w-full mx-auto justify-center items-center" />
 
         <h2 class="font-light tracking-wider text-[#5c5d61] text-3.5 pb-2">
           Պատվիրել Online՝
@@ -68,7 +68,7 @@ watch(() => route.path, async (n, o) => {
       </div>
 
       <div
-        class="flex flex-col md:flex-row place-items-center text-center items-center justify-center md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4">
+        class="flex flex-col md:flex-row place-items-center text-center items-center justify-center space-x-3.25 md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4">
         <content-btn dark @click="showModal">
           ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ
         </content-btn>

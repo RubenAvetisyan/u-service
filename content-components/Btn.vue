@@ -14,7 +14,7 @@ const props = defineProps({
   },
 })
 
-const btnClass = props.dark ? 'bg-opacity-80 bg-[#181a1f] text-white' : 'bg-opacity-[65%] bg-white text-[#393c41]'
+const btnClass = props.dark ? 'bg-opacity-80 bg-white dark:bg-[#181a1f] text-[#393c41] dark:text-white' : 'bg-opacity-63 dark:bg-white bg-[#181a1f] dark:text-[#393c41] text-white'
 </script>
 
 <template>

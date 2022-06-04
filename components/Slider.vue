@@ -16,7 +16,7 @@ const setSlide = (id) => {
 
   el.scrollIntoView({
     behavior: 'smooth',
-    block: 'start'
+    block: 'center'
   })
 }
 
@@ -44,26 +44,38 @@ const decIndex = () => {
   const nextIndex = index.value
   setSlide(nextIndex)
 }
+
 let interval = null
 let timeout = null
+
+const action = ()=>{
+  if (direction.value === 'next') {
+    incIndex()
+  } else {
+    decIndex()
+  }
+}
+
 onMounted(() => {
   interval = window.setInterval(() => {
-    if (direction.value === 'next') {
-      incIndex()
-    } else {
-      decIndex()
-    }
+    action()
   }, 2500)
-
-  // timeout = window.setTimeout(()=> {
-  //   window.clearInterval(interval)
-  //   interval = null
-  //   console.log("🚀 ~ file: Slider.vue ~ line 56 ~ timeout ~ interval", interval)
-  //   timeout = null
-  // },  3000)
 })
 
 onBeforeUnmount(()=>window.clearInterval(interval))
+
+const onActionButton = (directionWay = 'next')=>{
+  window.clearInterval(interval)
+  direction.value === directionWay
+  action()
+  if(!!timeout) return
+  timeout = window.setTimeout(()=> {
+    interval = window.setInterval(() => {
+      action()
+    }, 2500)
+    timeout = null
+  },  3000)
+} 
 </script>
 
 <template>
@@ -90,7 +102,7 @@ onBeforeUnmount(()=>window.clearInterval(interval))
     <!-- Slider controls -->
     <button type="button"
       class="flex absolute top-0 left-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"
-      data-carousel-prev @click="decIndex">
+      data-carousel-prev @click="()=>onActionButton('previous')">
       <span
         class="inline-flex justify-center items-center w-8 h-8 rounded-full sm:w-10 sm:h-10 bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
         <svg class="w-5 h-5 text-white sm:w-6 sm:h-6 dark:text-gray-800" fill="none" stroke="currentColor"
@@ -102,7 +114,7 @@ onBeforeUnmount(()=>window.clearInterval(interval))
     </button>
     <button type="button"
       class="flex absolute top-0 right-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"
-      data-carousel-next @click="incIndex">
+      @click="()=>onActionButton('next')">
       <span
         class="inline-flex justify-center items-center w-8 h-8 rounded-full sm:w-10 sm:h-10 bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
         <svg class="w-5 h-5 text-white sm:w-6 sm:h-6 dark:text-gray-800" fill="none" stroke="currentColor"
