@@ -57,12 +57,20 @@ watch(() => route.fullPath, (a, b) => {
       <div :class="['flex h-13.5 lg:w-3/7']">
         <slot name="nav" />
       </div>
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> 8667fec60af111881f2e21c8967a6251fab0ad51
       <slot name="header-right" />
       <slot name="color-mode"></slot>
     </header>
 
+<<<<<<< HEAD
     <main class="['z-10 overflow-y-scroll overflow-x-hidden w-full h-screen', mainClass]">
+=======
+    <main class="z-10 snap-y snap-mandatory overflow-y-scroll overflow-x-hidden w-full h-screen">
+>>>>>>> 8667fec60af111881f2e21c8967a6251fab0ad51
       <slot />
     </main>
 
