@@ -10,7 +10,6 @@ export function useScrollIntoParentNextSiblingElement(selector: any): void {
     if (!element)
       throw new ReferenceError(`element with selector '${selector}' not found`)
 
-    console.log('element: ', element)
     element.scrollIntoView({
       behavior: 'smooth',
     })

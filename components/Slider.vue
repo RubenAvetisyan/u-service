@@ -6,6 +6,8 @@ const props = defineProps({
   }
 })
 
+const pending = usePending()
+
 const imagesLastIndex = props.images.length - 1
 let index = ref(0)
 
@@ -49,7 +51,9 @@ const decIndex = () => {
 }
 
 let interval = null
-let timeout = null
+let timeout = (ms, cb = ()=>{}) => window.setTimeout(() => {
+    cb()
+  }, ms)
 
 const action = ()=>{
   if (direction.value === 'next') {
@@ -59,32 +63,34 @@ const action = ()=>{
   }
 }
 
+const callback = ()=>{
+  action()
+  interval = timeout(2500, callback)
+}
+
 onMounted(() => {
-  interval = window.setInterval(() => {
-    action()
-  }, 2500)
+  interval = timeout(2500, callback)
 })
 
-onBeforeUnmount(()=>window.clearInterval(interval))
+onBeforeUnmount(()=>{
+  window.clearInterval(interval)
+  timeout=null
+})
 
 const onActionButton = (directionWay = 'next')=>{
   window.clearInterval(interval)
   direction.value === directionWay
+  interval = null
   action()
-  if(!!timeout) return
-  timeout = window.setTimeout(()=> {
-    interval = window.setInterval(() => {
-      action()
-    }, 2500)
-    timeout = null
-  },  3000)
+  if(!!interval) return
+  interval = timeout(5000, callback)
 } 
 </script>
 
 <template>
-  <div id="default-carousel" class="relative overflow-hidden">
+  <div id="default-carousel" class="relative overflow-hidden" style="min-height: 14rem; min-width: 100%;">
     <!-- Carousel wrapper -->
-    <div id="head"
+    <div id="head" vif="!pending"
       class="flex overflow-y-hidden overflow-x-auto snap-x snap-mandatory before:shrink-0 before:w-[30vw] after:shrink-0 after:w-[30vw] object-center relative h-56 rounded-lg sm:h-64 xl:h-80 2xl:h-96">
       <!-- Item 1 -->
       <div v-for="(image, i) in images" :key="`image-slide-${i}`" :id="`image-slide-${i}`"
@@ -99,7 +105,7 @@ const onActionButton = (directionWay = 'next')=>{
     <!-- Slider indicators -->
     <div class="flex absolute bottom-5 left-1/2 z-30 gap-3 -translate-x-1/2">
       <button v-for="(image, i) in images" :key="`slide-button-${i}`" type="button" @click.stop="() => setSlide(i)"
-        class="shrink-0 w-3 h-3 rounded-full bg-light-100 backdrop-blur-sm opacity-25 light:opacity-50 space-y-3"
+        class="shrink-0 w-6 h-6 md:w-3 md:h-3 rounded-full bg-light-100 dark:bg-dark-200 hover:bg-blue backdrop-blur-sm opacity-25 hover:opacity-75 space-y-3"
         aria-current="false" :aria-label="`Slide ${i}`"></button>
     </div>
     <!-- Slider controls -->
