@@ -140,6 +140,9 @@ got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
         return this.servicesByPath[path]
       }
     },
+    getTitle() {
+      this.getServiceByPath.name
+    }
   },
 })
 

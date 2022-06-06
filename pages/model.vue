@@ -86,10 +86,10 @@ watch(() => route.path, async (n, o) => {
           :class="[itemClass]">
           <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
-              :path="`/${path}${subPath}`"
+              :path="`/${path}${subPath}`" textMargine='mt-3'
               class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
               <span
-                class="bg-clip-text font-bold font-bold tracking-wider text-size-[0.95rem] leading-[1.15] py-1 capitalize mw-auto px-1">
+                class="text-light-10 text-sm font-medium text-light-300  group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400">
                 {{ name }}</span>
             </r-home-menu>
           </div>

@@ -9,13 +9,18 @@ definePageMeta({
   key: route => route.fullPath,
 })
 
-const title = useTitle()
+const notionStore = useNotionStore()
+const title = ref('')
+
+
+let model = ref('')
 
 const name = useGetFirstParam('model')
-const model = name.replace(/[-\s]/g, ' ') || ''
+title.value = notionStore.getServiceByPath(name).name
+model.value = name.replace(/[-\s]/g, ' ') || ''
 
 useHead({
-  title: model.toLocaleUpperCase(),
+  title: model.value.toLocaleUpperCase(),
 })
 </script>
 

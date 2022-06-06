@@ -3,7 +3,7 @@
 import { storeToRefs } from 'pinia'
 import DarkToggle from './components/DarkToggle.vue';
 
-const nuxtApp = useNuxtApp()
+// const nuxtApp = useNuxtApp()
 
 definePageMeta({
   layout: false,
@@ -36,7 +36,7 @@ let services = null
 
 const params = {}
 
-const { pending, data: notion, refresh, error } = await useLazyAsyncData('notion', () => notionFetch(
+const { pending, data: notion, refresh, error } = await useLazyAsyncData(name || 'notion', () => notionFetch(
   url.value, {
   lazy: true,
   // transform: (response) => {
@@ -158,6 +158,14 @@ useHead({
     class: 'overflow-y-hidden',
   },
 })
+
+const color = useColorMode()
+
+if (!color.value) color.preference = 'light'
+const logo = computed(() => {
+  const mode = color.value
+  return mode === 'light' || mode === 'system' ? '/U-Service-light-full.png' : '/U-Service-full.png'
+})
 </script>
 
 <template>
@@ -171,7 +179,7 @@ useHead({
     <template #logo>
       <r-logo :width="245" class="md:mt-0">
         <template #img>
-          <img class="cursor-pointer bg-contain" src="/U-Service-full.png">
+          <img class="cursor-pointer bg-contain" :src="logo">
         </template>
       </r-logo>
     </template>

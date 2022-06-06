@@ -20,6 +20,10 @@ const props = defineProps({
   background: {
     type: String,
     default: ''
+  },
+  textMargine: {
+    type: String,
+    default: 'mt-6'
   }
 })
 
@@ -45,9 +49,9 @@ const onClick = () => {
     <img v-if="background" :src="background" :alt="path"
       class="rounded-full object-cover h-full w-full backdrop-blur-10 opacity-70 dark:opacity-50 group-hover:opacity-50 transition-all ease-in-out duration-150"
       width="180px" height="180px">
-    <div :class="background ? 'absolute left-0 place-content-center w-full h-full' : ''">
+    <div :class="[background ? 'absolute left-0' : '', 'place-content-center w-full h-full']">
       <div class="relative w-full h-full">
-        <div class="w-full h-full absolute z-10 mt-6 place-content-center mx-auto items-center">
+        <div :class="[textMargine, 'w-full h-full absolute z-10 place-content-center mx-auto items-center']">
           <img v-if="icon"
             class="w-6 h-6 shadow-lg rounded-full mx-auto transition duration-800 delay-75 ease-in-out group-hover:scale-125 group-hover:animate-bounce group-hover:grayscale shadow-lg shadow-[#0080BF] group-hover:invert"
             :src="icon" width="120px" height="120px">
@@ -65,7 +69,7 @@ const onClick = () => {
           </div>
         </div>
 
-        <div
+        <div v-if="background"
           class="absolute z-0 flex top-0 left-0 place-content-center mx-auto items-center justify-center w-full h-full">
           <div
             class="rounded-full h-[9rem] w-[9rem] bg-light-50 group-hover:bg-light-800 dark:bg-dark-50  opacity-50 dark:opacity-70 transition-all ease-in-out duration-150">
