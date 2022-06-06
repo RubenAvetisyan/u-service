@@ -60,19 +60,19 @@ export default defineEventHandler(async (event) => {
         retrieveDb(notion.client, q.db_id),
         query(notion.client, q.db_id),
       ]) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
+      // console.log("🚀 ~ file: [path].ts ~ DB ~ results", results)
 
 
       let childeServices: any = filterByObjectKey(
         retrive,
         'db_child_',
-        (result: [key: string, val: any][]) => {
-          result.map(([key, val]): { key: string; value: Record<string, any> } => {
-            if (val.relation?.database_id)
-              return val.relation.database_id
+        (result: [key: string, val: any][]) => result.map(([key, val]): { key: string; value: Record<string, any> } => {
+          // if (val.relation?.database_id)
+          //   return val.relation.database_id
 
-            return { key, value: val }
-          })
-        },
+          // return { key, value: val }
+          return val?.relation?.database_id || ''
+        }).filter(s=>s),
       )
 
 
@@ -80,8 +80,8 @@ export default defineEventHandler(async (event) => {
         retrive,
         'db_parent_',
         (result: [key: string, val: any][]) => result.map(([_, val]) => {
-          return val.relation.database_id
-        }),
+          return val?.relation?.database_id || ''
+        }).filter(s=>s),
       ) as string[]
 
       const links = await getLinksFromResults(results, parentService[0])

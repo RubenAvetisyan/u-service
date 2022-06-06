@@ -98,8 +98,9 @@ watch(() => route.path, async (newPath, oldPath) => {
     await useSetLinks(services, url.value)
 
     if (!services?.childeServices?.length) return
-
     notionStore.setChildeServices([services.childeServices], services.links)
+
+    console.log("🚀 ~ file: app.vue ~ line 103 ~ watch ~ services.childeServices", services.childeServices)
 
     services = null
 

@@ -55,8 +55,8 @@ export const useNotionStore = defineStore('notion', {
     setChildeServices(childeServiceIds: string[] = [], links: { [key: string]: any }) {
 
 
-      if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to be typeof string[],but
-got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
+//       if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to be typeof string[],but
+// got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
 
       if (!links)
         return

@@ -2,7 +2,7 @@
 import { booleanLiteral, stringLiteral } from '@babel/types'
 import { defineNuxtConfig } from 'nuxt'
 
-// const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
@@ -56,6 +56,9 @@ export default defineNuxtConfig({
       'process.env.BASE_URL': stringLiteral,
       'process.env.NOTION_API': stringLiteral,
       'process.env.NOTION_DATABASE_ID': stringLiteral,
+    },
+    build: {
+      sourcemap: isDev ? 'inline' : true,
     },
   },
 })
