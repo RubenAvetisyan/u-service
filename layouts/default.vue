@@ -29,7 +29,7 @@ const backgroundImg = computed(() => {
 const path = ref(!!useGetFirstParam('model'))
 
 const mainClass = ref('')
-const backgroundImageOpacity = ref(!path.value ? 'opacity-37' : 'opacity-80')
+const backgroundImageOpacity = ref(!path.value ? 'opacity-70' : 'opacity-80')
 
 watch(() => route.fullPath, (a, b) => {
   if (a !== b)
@@ -38,7 +38,7 @@ watch(() => route.fullPath, (a, b) => {
   path.value = !!useGetFirstParam('model')
 
   mainClass.value = path.value ? 'snap-y snap-mandatory' : ''
-  backgroundImageOpacity.value = !path.value ? 'opacity-37' : 'opacity-80'
+  backgroundImageOpacity.value = !path.value ? 'opacity-70' : 'opacity-80'
 })
 </script>
 

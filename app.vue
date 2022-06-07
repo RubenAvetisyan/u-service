@@ -62,6 +62,7 @@ if (notion?.value) {
 // When query string changes, refresh
 watch(() => route.path, async (newPath, oldPath) => {
   try {
+    console.log('route.path: ', route.path);
 
 
     const isSame = newPath === oldPath || newPath === '/' || !!services
@@ -86,11 +87,7 @@ watch(() => route.path, async (newPath, oldPath) => {
     // When route.path string changes, fetching for new data 
     services = await notionFetch(
       url.value, {
-      lazy: false,
-      // transform: (response) => {
-      //   
-      //   return response
-      // },
+        lazy: false,
     })
 
     isPending.value = pending
@@ -99,8 +96,6 @@ watch(() => route.path, async (newPath, oldPath) => {
 
     if (!services?.childeServices?.length) return
     notionStore.setChildeServices([services.childeServices], services.links)
-
-    console.log("🚀 ~ file: app.vue ~ line 103 ~ watch ~ services.childeServices", services.childeServices)
 
     services = null
 

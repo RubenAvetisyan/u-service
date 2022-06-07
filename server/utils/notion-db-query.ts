@@ -1,14 +1,34 @@
 /* eslint-disable no-console */
 import { Client } from '@notionhq/client'
-import { SearchResponse, GetDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
+import { SearchResponse, GetDatabaseResponse, QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints'
 import { errorHandler } from './helpers'
-// import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
+import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
 
 // interface C { id: string; Name: {}; path: {}; url: string; services?: {}[] }
 
 // interface Results {
 //   results?: C[] | Object[]
 // }
+
+
+const props = {
+  filter: {
+    and: [
+      {
+        property: 'Status',
+        checkbox: {
+          equals: true,
+        },
+      },
+    ],
+  },
+  sorts: [
+    {
+      property: 'order',
+      direction: 'ascending',
+    },
+  ],
+}
 
 export declare interface Link {
   id: string
@@ -31,7 +51,7 @@ export declare interface Link {
 //   getLinksFromResults(results: {}[]): Promise<Link[]>
 // }
 
-type SearFilter = {
+type SearchFilter = {
   property: "object";
   value: "page" | "database";
 } | undefined
@@ -44,7 +64,7 @@ type searchSort = {
 type SearchStartCursor = string | undefined
 
 interface SearchOptions {
-  filter?: SearFilter
+  filter?: SearchFilter
   sort?: searchSort
   start_cursor?: SearchStartCursor
 }
@@ -71,37 +91,43 @@ export class Notion {
     return cb ? cb(searchResult) : result
   }
 
-  retrivePage(pageId: string) {
+  async retrivePage(pageId: string) {
     if (!this.client) return errorHandler(400, 'notion.so client not found')
+
+    console.log('=== RETRIVING THE PAGE ===', '||', 'pageId: ', pageId)
 
     return this.client.pages.retrieve({ page_id: pageId })
   }
-}
 
-const props = {
-  filter: {
-    and: [
-      {
-        property: 'Status',
-        checkbox: {
-          equals: true,
-        },
-      },
-    ],
-  },
-  sorts: [
-    {
-      property: 'order',
-      direction: 'ascending',
-    },
-  ],
+  async blocks(blockId: string) {
+    if (!this.client) return errorHandler(400, 'notion.so client not found')
+
+    return this.client.blocks.retrieve({
+      block_id: blockId,
+    })
+  }
+
+  async query(database_id: string, options?: { filter: {} }) {
+    try {
+      if (!!options) errorHandler(301, 'options parameter is in ToDo list')
+      if (!this.client) throw new ReferenceError('notion.so client not found')
+
+      // const filters = options || props
+      const queryResult: Promise<QueryDatabaseResponse> = this.client.databases.query({ database_id })
+
+      return queryResult
+    }
+    catch (error: any) {
+      errorHandler(error.statusCode, error.message)
+    }
+  }
 }
 
 export async function query(client: any, database_id: string, options?: { filter: {} }) {
   try {
     const filters = options || props
     const queryResult = client.databases.query({ database_id, ...filters })
-    
+
     return queryResult
   }
   catch (error) {
@@ -145,6 +171,7 @@ export async function getLinksFromResults(results = [], parent_db_Id: ParentId =
       services: {},
       url,
       order: properties?.order?.number || i,
+      description: properties?.Description?.rich_text[0]?.plain_text || '',
     }
 
     links[id].parent_db_Id = parent_db_Id
@@ -168,7 +195,7 @@ function getLength(arr: any[]) {
 }
 
 export async function getRelatedServices(client: any, relations: { [key: string]: any }[]) {
-  
+
   if (!relations)
     return undefined
   const results = await Promise.all(relations.map(async (relation) => {

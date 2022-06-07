@@ -4,7 +4,7 @@ import type { IncomingMessage } from 'h3'
 import { defineEventHandler } from 'h3'
 import errorHandler from '../../utils/erroeHandler'
 import type { Link, SetRelationFilter } from '../../utils/notion-db-query'
-import { Notion, getLinksFromResults, query, retrieveDb, setRelationFilter } from '../../utils/notion-db-query'
+import { Notion, getLinksFromResults, retrieveDb, setRelationFilter } from '../../utils/notion-db-query'
 import { filterByObjectKey } from '../../utils/helpers'
 
 interface Filters {
@@ -42,26 +42,33 @@ export default defineEventHandler(async (event) => {
   const links: Link | {} = {}
   try {
     if (req.method === 'GET') {
-      const response = await notion.search('services', { filter: { value: 'database', property: 'object' } })
 
 
-      const pageResponse = await notion.retrivePage('c0275da0-c309-4e56-b800-1640a89f5207')
+      // const pageResponse = await notion.retrivePage('c0275da0-c309-4e56-b800-1640a89f5207')
 
 
       const q: Query = useQuery(event.req)
 
-
+      //Must be like 'd4af2b073c0e4d9ea64f85b72a23db0c'
       if (!q?.db_id || !Reflect.ownKeys(q).length)
         return {}
 
       filters.filter.and = setRelationFilter(q.parent ? { parent: [q.parent] } : { children: q.services || [] })
 
-      const [{ properties: retrive = [] }, { results }] = await Promise.all([
+      const [{ properties: retrive = [] }, query] = await Promise.all([
         retrieveDb(notion.client, q.db_id),
-        query(notion.client, q.db_id),
-      ]) // 'd4af2b073c0e4d9ea64f85b72a23db0c'
-      // console.log("🚀 ~ file: [path].ts ~ DB ~ results", results)
+        notion.query(q.db_id),
+      ])
 
+      const results: any = query?.results || []
+      console.log('results: ', results);
+
+      // const pageId = results[0].url.replace('https://www.notion.so/', '')
+      // console.log('pageId: ', pageId);
+      // const page = await notion.retrivePage(pageId)
+
+      // const block = await notion.blocks('85e2177532ce424ebe1b04993ad983de')
+      // console.log('block: ', block)
 
       let childeServices: any = filterByObjectKey(
         retrive,
@@ -72,7 +79,7 @@ export default defineEventHandler(async (event) => {
 
           // return { key, value: val }
           return val?.relation?.database_id || ''
-        }).filter(s=>s),
+        }),
       )
 
 
@@ -81,12 +88,13 @@ export default defineEventHandler(async (event) => {
         'db_parent_',
         (result: [key: string, val: any][]) => result.map(([_, val]) => {
           return val?.relation?.database_id || ''
-        }).filter(s=>s),
+        }).filter(s => s),
       ) as string[]
 
       const links = await getLinksFromResults(results, parentService[0])
+      console.log('links: ', links);
 
-      childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
+      // childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
 
       return { links, childeServices }
     }

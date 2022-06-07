@@ -3,8 +3,14 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { NotionValue } from './helpers'
 
 type Obj = Record<string, any>
+
+const lastUrl = ref('')
 export const notionFetch = (url: string, fetchOptions: any = {}) => {
   // eslint-disable-next-line no-undef
+
+  // if (lastUrl.value === url)
+  //   lastUrl.value = url
+  // else return
 
   return $fetch(url, {
     baseURL: '/api',

@@ -80,11 +80,12 @@ watch(() => route.path, async (n, o) => {
         @click="() => scrollDown('#contents')" />
 
       <div v-if="isLinkServices" id="contents">
-        <div v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/' }, id, i) in link.services"
+        <div
+          v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', description = '' }, id, i) in link.services"
           :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
-          class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex text-center items-center justify-center"
+          class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex flex-col text-center items-center justify-center px-4 place-content-center"
           :class="[itemClass]">
-          <div class="flex mx-4 items-center justify-center h-10 text-center content-center">
+          <div class="flex mx-auto items-center justify-center h-10 text-center content-center mb-8">
             <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
               :path="`/${path}${subPath}`" textMargine='mt-3'
               class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
@@ -93,8 +94,13 @@ watch(() => route.path, async (n, o) => {
                 {{ name }}</span>
             </r-home-menu>
           </div>
+          <div v-for="(text, di) in description.split(/[\.:]/g).filter(s=>s)" :key="`${id}-description-${di}`"
+            class="flex mt-1 md:mt-10 pa-4 w-full bg-light-100 dark:bg-dark-100 rounded-xl backdrop-blur-sm opacity-75 text-dark-400 dark:text-light-100 font-medium text-center">
 
-          <content-chevron-down class="mt-[50vh] md:mt-[65vh] mb-[6vh] absolute rounded-full mx-auto"
+            <span class="mx-auto">{{text}}</span>
+          </div>
+
+          <content-chevron-down class="mt-[50vh] mb-[6vh] md:mt-[65vh] lg:mb-[3vh] absolute rounded-full mx-auto"
             :class="[isLastItem(i, link?.services) ? 'rotate-180' : null]"
             @click="() => scrollDown(!isLastItem(i, link?.services) ? `#content-${i + 1}` : '#main-content')" />
         </div>
