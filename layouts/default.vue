@@ -44,15 +44,12 @@ watch(() => route.fullPath, (a, b) => {
 
 <template>
   <div class="box-border flex flex-col md:items-center h-full w-full">
-    <div :style="`background-image: url('${backgroundImg}');`"
-      :class="['fixed top-0 left-0 z-0 h-full w-full bg-current bg-center bg-cover bg-fixed bg-center', backgroundImageOpacity]">
-    </div>
     <!-- sidebar -->
     <r-side-nav v-if="isDesktopOrTablet && isSidebarHidden && !pending" />
 
     <!-- header -->
     <header v-if="!pending && ($slots.nav || $slots.logo || $slots['header-right'])"
-      class="z-30 justify-center h-13.5 z-10 flex justify-between fixed md:inset-0 backdrop-blur-sm bg-opacity-50 dark:bg-opacity-10 bg-light-400 dark:bg-dark-900"
+      class="flex inset-x-0 z-30 h-13.5 justify-between fixed backdrop-blur-sm bg-opacity-50 dark:bg-opacity-10 bg-light-400 dark:bg-dark-900"
       style="min-height: 54px; min-width: 100%;">
       <div v-if="!!$slots.logo" id="logo" class="flex items-center pl-6 md:pl-8 md:w-61.25 min-h-13.5 max-h-[54px]"
         style="max-height: 54px;">
@@ -62,7 +59,7 @@ watch(() => route.fullPath, (a, b) => {
       <div :class="['flex h-13.5 lg:w-3/7']">
         <slot name="nav" />
       </div>
-      
+
       <slot name="header-right" />
       <slot name="color-mode"></slot>
     </header>
@@ -80,7 +77,13 @@ watch(() => route.fullPath, (a, b) => {
           </div>
         </div>
       </Teleport>
+      <Teleport to="body">
+        <div :style="`background-image: url('${backgroundImg}');`"
+          :class="['fixed inset-0 z-0 h-full w-full bg-current bg-center bg-cover bg-fixed', backgroundImageOpacity]">
+        </div>
+      </Teleport>
     </ClientOnly>
+
 
     <footer v-if="$slots.footer"
       class="grid grid-cols-3 gap-4 px-4 w-fill h-18.75 bg-dark text-center text-white items-center content-center b-0 fixed bottom-0 left-0 right-0 z-10">

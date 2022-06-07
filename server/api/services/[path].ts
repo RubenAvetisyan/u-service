@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
       ])
 
       const results: any = query?.results || []
-      console.log('results: ', results);
+      // console.log('query results: ', results);
 
       // const pageId = results[0].url.replace('https://www.notion.so/', '')
       // console.log('pageId: ', pageId);
