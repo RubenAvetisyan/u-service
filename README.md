@@ -1,6 +1,6 @@
-# Nuxt 3 Minimal Starter
+# U-Service: based on Nuxt 3 Minimal Starter
 
-We recommend to look at the [documentation](https://v3.nuxtjs.org).
+We recommend looking at the [documentation](https://v3.nuxtjs.org).
 
 ## Setup
 
@@ -12,7 +12,7 @@ yarn install
 
 ## Development
 
-Start the development server on http://localhost:3000
+Start the [development server on](http://localhost:3000)
 
 ```bash
 yarn dev
@@ -20,10 +20,10 @@ yarn dev
 
 ## Production
 
-Build the application for production:
+Build the production application:
 
 ```bash
 yarn build
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment).
+Check out the [deployment documentation](https://v3.nuxtjs.org/docs/deployment).
