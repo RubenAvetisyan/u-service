@@ -4,13 +4,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  light: {
-    type: Boolean,
-    default: false,
-  },
 })
-
-const color = props.light ? 'text-white' : 'text-[#393c41]'
 
 const modelText = props.model ? props.model.replace(/-/g, ' ') : ''
 const title = modelText.length === 1 ? `Service ${modelText}` : modelText
@@ -18,8 +12,7 @@ const title = modelText.length === 1 ? `Service ${modelText}` : modelText
 
 <template>
   <h1
-    class="font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1" :class="[color]"
-  >
+    class="font-bold tracking-wider text-[10.25rem] leading-[1.15] py-1 capitalize mw-auto px-1 text-white light:text-[#393c41]">
     {{ title }}
   </h1>
 </template>
