@@ -56,8 +56,8 @@ watch(() => route.path, async (n, o) => {
 </script>
 
 <template>
-  <div class="h-screen justify-between pb-13.75 flex flex-col items-center">
-    <div class="snap-start h-screen pt-[calc(13vh+3.375rem)] place-content-center">
+  <div class="h-screen justify-between pb-13.75 items-center">
+    <div class="relative snap-start h-screen w-full pt-[calc(13vh+3.375rem)] place-content-center">
       <div id="main-content" class="mx-auto text-center items-center justify-center">
         <NuxtPage class="dark w-full mx-auto justify-center items-center" />
 
@@ -69,7 +69,7 @@ watch(() => route.path, async (n, o) => {
       </div>
 
       <div
-        class="flex place-items-center text-center items-center justify-center space-x-3.25 md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4">
+        class="flex flex-wrap mx-auto max-w-sm md:max-w-xl items-center justify-around space-x-3.25 md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4 h-40 md:h-20">
         <content-btn dark @click="showModal">
           ԱՆՀԱՏԱԿԱՆ ՊԱՏՎԵՐ
         </content-btn>
@@ -77,38 +77,40 @@ watch(() => route.path, async (n, o) => {
           Առկա ծառայություններ
         </content-btn>
       </div>
-      <content-chevron-down v-if="isLinkServices" class="mt-[50vh] md:mt-[55vh] lg:mt-[65vh] xl:mt-[55vh] mb-[6vh]"
+      <div class="h-full"></div>
+      <content-chevron-down v-if="isLinkServices" class="absolute bottom-[1rem] inset-x-0"
         @click="() => scrollDown('#contents')" />
 
-      <div v-if="isLinkServices" id="contents">
-        <div
-          v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', description = '' }, id, i) in link.services"
-          :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
-          class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex flex-col text-center items-center justify-center px-4 place-content-center"
-          :class="[itemClass]">
-          <div class="flex mx-auto items-center justify-center h-10 text-center content-center mb-8">
-            <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
-              :path="`/${path}${subPath}`" textMargine='mt-3'
-              class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
-              <span
-                class="text-light-10 text-sm font-medium text-light-300  group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400">
-                {{ name }}</span>
-            </r-home-menu>
-          </div>
-          <div v-for="(text, di) in description.split(/[\.:]/g).filter(s=>s)" :key="`${id}-description-${di}`"
-            class="flex mt-1 md:mt-10 pa-4 max-w-xl bg-light-100 dark:bg-dark-100 rounded-xl backdrop-blur-sm opacity-75 text-dark-400 dark:text-light-100 font-medium text-center">
 
-            <span class="mx-auto">{{text}}</span>
-          </div>
-
-          <content-chevron-down class="mt-[50vh] mb-[6vh] md:mt-[65vh] lg:mb-[3vh] absolute rounded-full mx-auto"
-            :class="[isLastItem(i, link?.services) ? 'rotate-180' : null]"
-            @click="() => scrollDown(!isLastItem(i, link?.services) ? `#content-${i + 1}` : '#main-content')" />
-        </div>
-      </div>
-
-      <!-- MODAL -->
-      <content-form-custom-order :show="isModal" :on-submit="showModal" :on-cancel="showModal" />
     </div>
+    <div v-if="isLinkServices" id="contents" class="relative">
+      <div
+        v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', description = '' }, id, i) in link.services"
+        :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :style="`background-image: url('${imgUrl}');`"
+        class="snap-start h-screen w-screen relative bg-cover bg-fixed bg-center flex flex-col text-center items-center justify-center px-4 place-content-center"
+        :class="[itemClass]">
+        <div class="flex mx-auto items-center justify-center h-10 text-center content-center mb-8">
+          <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
+            :path="`/${path}${subPath}`" textMargine='mt-3'
+            class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
+            <span
+              class="text-light-10 text-sm font-medium text-light-300  group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400">
+              {{ name }}</span>
+          </r-home-menu>
+        </div>
+        <div v-for="(text, di) in description.split(/[\.:]/g).filter(s=>s)" :key="`${id}-description-${di}`"
+          class="flex mt-1 md:mt-10 pa-4 max-w-xl bg-light-100 dark:bg-dark-100 rounded-xl backdrop-blur-sm opacity-75 text-dark-400 dark:text-light-100 font-medium text-center">
+
+          <span class="mx-auto">{{text}}</span>
+        </div>
+
+        <content-chevron-down class="absolute bottom-[1rem] inset-x-0"
+          :class="[isLastItem(i, link?.services) ? 'rotate-180' : null]"
+          @click="() => scrollDown(!isLastItem(i, link?.services) ? `#content-${i + 1}` : '#main-content')" />
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <content-form-custom-order :show="isModal" :on-submit="showModal" :on-cancel="showModal" />
   </div>
 </template>
