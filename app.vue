@@ -204,6 +204,7 @@ const logo = computed(() => {
 </template>
 
 <style>
+@import '@unocss/reset/tailwind.css';
 html,
 body,
 #__nuxt {
