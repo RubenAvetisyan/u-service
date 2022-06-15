@@ -24,7 +24,7 @@ let repete = (ms) => {
       translateRight.value = 'translate-x-' + num.value
       translateLeft.value = 'translate-x-' + num.value
     }
-    console.log('translateLeft: ', translateLeft.value);
+
     repetetimeout(milliseconds)
   }, ms, repete, ms + 500)
 }
