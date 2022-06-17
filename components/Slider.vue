@@ -17,12 +17,9 @@ const setSlide = (id) => {
   if (!el) return
 
   const {x} = el.getBoundingClientRect();
+  console.log('x: ', x);
 
-  el.scrollIntoView({
-    x, y: 0,
-    behavior: 'smooth',
-    block: 'center'
-  })
+  document.getElementById('head').scrollTo(x, 0)
 }
 
 const direction = ref('next')
@@ -91,7 +88,7 @@ const onActionButton = (directionWay = 'next')=>{
   <div id="default-carousel" class="relative overflow-hidden" style="min-height: 14rem; min-width: 100%;">
     <!-- Carousel wrapper -->
     <div id="head" vif="!pending"
-      class="flex overflow-y-hidden overflow-x-auto snap-x snap-mandatory before:shrink-0 before:w-[30vw] after:shrink-0 after:w-[30vw] object-center relative h-56 rounded-lg sm:h-64 xl:h-80 2xl:h-96">
+      class="flex scroll-smooth overflow-y-hidden overflow-x-auto snap-x snap-mandatory before:shrink-0 before:w-[30vw] after:shrink-0 after:w-[30vw] object-center relative h-56 rounded-lg sm:h-64 xl:h-80 2xl:h-96">
       <!-- Item 1 -->
       <div v-for="(image, i) in images" :key="`image-slide-${i}`" :id="`image-slide-${i}`"
         class="duration-700 ease-in-out shrink-0 snap-center place-content-center object-center">
