@@ -1,7 +1,7 @@
 <script setup>
 
-const translateTop = ref('-translate-y-0')
-const translateLeft = ref('-translate-x-0')
+const translateTop = ref('translate-y-0')
+const translateLeft = ref('translate-x-0')
 const translateRight = ref('translate-x-0')
 const num = ref(0)
 
@@ -13,20 +13,21 @@ let repete = (ms) => {
     if (!repete || !timer) return
 
     if (num.value === 0) {
-      num.value = num.value + 48
-      translateTop.value = '-translate-y-' + num.value
-      translateRight.value = 'translate-x-' + num.value
-      translateLeft.value = '-translate-x-' + num.value
+      num.value = 48
+      translateTop.value = '-translate-y-48'
+      translateRight.value = 'translate-x-48'
+      translateLeft.value = '-translate-x-48'
     }
     else {
       num.value = 0
-      translateTop.value = 'translate-y-' + num.value
-      translateRight.value = 'translate-x-' + num.value
-      translateLeft.value = 'translate-x-' + num.value
+      translateTop.value = 'translate-y-0'
+      translateRight.value = 'translate-x-0'
+      translateLeft.value = 'translate-x-0'
     }
 
+
     repetetimeout(milliseconds)
-  }, ms, repete, ms + 500)
+  }, ms, repete, ms)
 }
 
 repete(2000)
@@ -43,15 +44,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative w-full max-w-lg">
-    <div
-      :class="`anim-blob top-0 -left-4 bg-purple-300 motion-reduce:transition transition-transform duration-2000 ${translateLeft} ease-in-out`">
+  <div class="w-full max-w-lg">
+    <div class="anim-blob top-0 -left-4 bg-slate-400 transition-blurry-shape" :class="[translateLeft]">
     </div>
-    <div
-      :class="`anim-blob top-0 -right-4 bg-yellow-300 motion-reduce:transition transition-transform duration-2000 ${translateRight} ease-in-out`">
+    <div class="anim-blob top-0 -right-4 bg-teal-300 transition-blurry-shape" :class="[translateRight]">
     </div>
-    <div
-      :class="`anim-blob -bottom-8 left-20 bg-pink-300 motion-reduce:transition transition-transform duration-2000 ${translateTop}  ease-in-out`">
+    <div class="anim-blob -bottom-8 left-20 bg-blue-300 transition-blurry-shape" :class="[translateTop]">
     </div>
     <div class=" m-8 relative space-y-4">
       <slot></slot>
