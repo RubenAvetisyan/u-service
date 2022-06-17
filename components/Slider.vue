@@ -16,8 +16,7 @@ const setSlide = (id) => {
 
   if (!el) return
 
-  const {x} = el.getBoundingClientRect();
-  console.log('x: ', x);
+  const { x } = el.getBoundingClientRect()
 
   document.getElementById('head').scrollTo(x, 0)
 }
