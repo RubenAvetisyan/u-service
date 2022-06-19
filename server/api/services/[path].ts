@@ -43,9 +43,7 @@ export default defineEventHandler(async (event) => {
     if (req.method === 'GET') {
       // const pageResponse = await notion.retrivePage('c0275da0-c309-4e56-b800-1640a89f5207')
       const path = getLastParam(req.url || '')
-      console.log('path: ', path);
-      console.log('cache size: ', cache.size(), cache.getKes());
-      console.log('isInCache: ', cache.isInCache(path));
+
       if (cache.isInCache(path)) {
         const childeServices = cache.getFromCache('childe-services')
         const result = { links: cache.getFromCache(path), childeServices }
@@ -97,13 +95,12 @@ export default defineEventHandler(async (event) => {
         ) as string[]
 
         const links = await getLinksFromResults(results, parentService[0])
-        console.log('links: ', links)
 
         // childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
 
         cache.setCache(path, links)
         cache.setCache('childe-services', childeServices)
-        console.log('cache size: ', cache.size());
+        console.log('cache size: ', cache.size(), 'last time', Date.now().toLocaleString())
 
         return { links, childeServices }
       }
