@@ -15,3 +15,8 @@ export const errorHandler = (statusCode: number, errorMessage: string, cb?: Func
   h3Error.message = cb ? cb(errorMessage) : errorMessage
   throw createError(h3Error)
 }
+
+export function getLastParam(text: string) {
+  const params = text.replace(/\/api|(\?.*)+|[!@#$%^&*)(><?:"}{_\=\\]/g, '').split('/')
+  return params.length ? params[params.length - 1] : ''
+}

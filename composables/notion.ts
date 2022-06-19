@@ -69,7 +69,8 @@ export const useNotionStore = defineStore('notion', {
 
       const childeServices = ref(new Set<string>([...Object.values(this.childeServices[key] || {}).flat()]))
       childeServiceIds.forEach(serviceId => childeServices.value.add(serviceId))
-      this.childeServices = { [key]: [...childeServices.value] }
+
+      this.childeServices = { ...this.childeServices, [key]: [...childeServices.value] }
     },
     setQuery(key?: string) {
       // const name = useGetLastParam('model') || ''
