@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
       if (cache.isInCache(path)) {
         const childeServices = cache.getFromCache('childe-services')
         const result = { links: cache.getFromCache(path), childeServices }
-        console.log('result: ', result);
+
         return result
       } else {
         const q: Query = useQuery(event.req)
