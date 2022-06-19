@@ -21,7 +21,7 @@ useHead({
 </script>
 
 <template>
-  <div class="relative snap-center h-full justify-between w-full x-overflow-hidden items-center px-2 md:px-4">
+  <div class="index-ccontaine">
     <div class="fixed inset-0 min-h-screen flex items-center justify-center px-16</div>">
       <r-animation-blurry-shapes class="absolute z-0 top-1/2 animate-spin animate-duration-20000">
       </r-animation-blurry-shapes>

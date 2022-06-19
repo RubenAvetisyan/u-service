@@ -92,7 +92,7 @@ watch(() => route.path, async (n, o) => {
         <template #btn>
           <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
             :path="`/${path}${subPath}`" textMargine='mt-3' class="model-contents-home-menu">
-            <span class="home-menu-first-span"> {{ name }}</span>
+            <span class="model-home-menu-first-span"> {{ name }}</span>
           </r-home-menu>
         </template>
 
