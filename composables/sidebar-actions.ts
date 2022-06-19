@@ -4,7 +4,7 @@ function toggle(el: Element, ...classNames: string[]) {
   if (!el)
     throwError(`value of property "el" is "${el}"`)
   classNames.forEach(className => el.classList.toggle(className))
-  // 
+  //
 }
 
 export function useSidebarToggle() {

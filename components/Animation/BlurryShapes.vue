@@ -1,5 +1,4 @@
 <script setup>
-
 const translateTop = ref('translate-y-0')
 const translateLeft = ref('translate-x-0')
 const translateRight = ref('translate-x-0')
@@ -10,7 +9,8 @@ let repete = (ms) => {
   timer = null
   timer = setTimeout((...args) => {
     const [repetetimeout, milliseconds] = args
-    if (!repete || !timer) return
+    if (!repete || !timer)
+      return
 
     if (num.value === 0) {
       num.value = 48
@@ -24,7 +24,6 @@ let repete = (ms) => {
       translateRight.value = 'translate-x-0'
       translateLeft.value = 'translate-x-0'
     }
-
 
     repetetimeout(milliseconds)
   }, ms, repete, ms)
@@ -45,14 +44,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="w-full max-w-lg">
-    <div class="anim-blob top-0 -left-4 bg-slate-400 transition-blurry-shape" :class="[translateLeft]">
-    </div>
-    <div class="anim-blob top-0 -right-4 bg-teal-300 transition-blurry-shape" :class="[translateRight]">
-    </div>
-    <div class="anim-blob -bottom-8 left-20 bg-blue-300 transition-blurry-shape" :class="[translateTop]">
-    </div>
+    <div class="anim-blob top-0 -left-4 bg-slate-400 transition-blurry-shape" :class="[translateLeft]" />
+    <div class="anim-blob top-0 -right-4 bg-teal-300 transition-blurry-shape" :class="[translateRight]" />
+    <div class="anim-blob -bottom-8 left-20 bg-blue-300 transition-blurry-shape" :class="[translateTop]" />
     <div class=" m-8 relative space-y-4">
-      <slot></slot>
+      <slot />
     </div>
     <!-- <div class="m-8 relative space-y-4">
         <div class="p-5 bg-white rounded-lg flex items-center justify-between space-x-8">
@@ -81,5 +77,4 @@ onBeforeUnmount(() => {
         </div>
       </div> -->
   </div>
-
 </template>

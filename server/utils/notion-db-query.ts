@@ -1,15 +1,14 @@
 /* eslint-disable no-console */
 import { Client } from '@notionhq/client'
-import { SearchResponse, GetDatabaseResponse, QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints'
+// import { GetDatabaseResponse, QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints'
+import type { QueryDatabaseResponse, SearchResponse } from '@notionhq/client/build/src/api-endpoints'
 import { errorHandler } from './helpers'
-import type { QueryDatabaseResponse } from '@notionhq/client/build/src/api-endpoints'
 
 // interface C { id: string; Name: {}; path: {}; url: string; services?: {}[] }
 
 // interface Results {
 //   results?: C[] | Object[]
 // }
-
 
 const props = {
   filter: {
@@ -52,13 +51,13 @@ export declare interface Link {
 // }
 
 type SearchFilter = {
-  property: "object";
-  value: "page" | "database";
+  property: 'object'
+  value: 'page' | 'database'
 } | undefined
 
 type searchSort = {
-  timestamp: "last_edited_time";
-  direction: "ascending" | "descending";
+  timestamp: 'last_edited_time'
+  direction: 'ascending' | 'descending'
 } | undefined
 
 type SearchStartCursor = string | undefined
@@ -73,7 +72,8 @@ export class Notion {
   client: Client | null = null
 
   constructor(NOTION_API_KEY: string) {
-    if (!NOTION_API_KEY) return errorHandler(501, `Expected NOTION_API_KEY, but got ${NOTION_API_KEY} as ${typeof NOTION_API_KEY}`)
+    if (!NOTION_API_KEY)
+      return errorHandler(501, `Expected NOTION_API_KEY, but got ${NOTION_API_KEY} as ${typeof NOTION_API_KEY}`)
 
     this.client = new Client({
       auth: NOTION_API_KEY,
@@ -81,7 +81,8 @@ export class Notion {
   }
 
   async search(query: string, options?: SearchOptions) {
-    if (!this.client) return errorHandler(400, 'notion.so client not found')
+    if (!this.client)
+      return errorHandler(400, 'notion.so client not found')
 
     return this.client.search({ query, ...options })
   }
@@ -92,7 +93,8 @@ export class Notion {
   }
 
   async retrivePage(pageId: string) {
-    if (!this.client) return errorHandler(400, 'notion.so client not found')
+    if (!this.client)
+      return errorHandler(400, 'notion.so client not found')
 
     console.log('=== RETRIVING THE PAGE ===', '||', 'pageId: ', pageId)
 
@@ -100,7 +102,8 @@ export class Notion {
   }
 
   async blocks(blockId: string) {
-    if (!this.client) return errorHandler(400, 'notion.so client not found')
+    if (!this.client)
+      return errorHandler(400, 'notion.so client not found')
 
     return this.client.blocks.retrieve({
       block_id: blockId,
@@ -109,8 +112,10 @@ export class Notion {
 
   async query(database_id: string, options?: { filter: {} }) {
     try {
-      if (!!options) errorHandler(301, 'options parameter is in ToDo list')
-      if (!this.client) throw new ReferenceError('notion.so client not found')
+      if (options)
+        errorHandler(301, 'options parameter is in ToDo list')
+      if (!this.client)
+        throw new ReferenceError('notion.so client not found')
 
       // const filters = options || props
       const queryResult: Promise<QueryDatabaseResponse> = this.client.databases.query({ database_id })
@@ -145,7 +150,7 @@ export async function retrievePage(client: any, page_id: string) {
 
 type ParentId = string
 export async function getLinksFromResults(results = [], parent_db_Id: ParentId = '') {
-  const links = {} as { [key: string]: any }
+  const links = {} as Record<string, any>
   for (let i = 0; i < getLength(results); i++) {
     const { id, parent, archived, properties, url = '', cover }: any = results[i]
 
@@ -194,8 +199,7 @@ function getLength(arr: any[]) {
   return arr?.length || 0
 }
 
-export async function getRelatedServices(client: any, relations: { [key: string]: any }[]) {
-
+export async function getRelatedServices(client: any, relations: Record<string, any>[]) {
   if (!relations)
     return undefined
   const results = await Promise.all(relations.map(async (relation) => {

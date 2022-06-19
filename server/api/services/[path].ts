@@ -27,12 +27,9 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY
 
 const notion = NOTION_API_KEY ? new Notion(NOTION_API_KEY) : null
 
-
-
 export default defineEventHandler(async (event) => {
   const req: IncomingMessage = event.req
   const res: ServerResponse = event.res
-
 
   if (!notion) {
     res.statusCode = 400
@@ -42,14 +39,11 @@ export default defineEventHandler(async (event) => {
   const links: Link | {} = {}
   try {
     if (req.method === 'GET') {
-
-
       // const pageResponse = await notion.retrivePage('c0275da0-c309-4e56-b800-1640a89f5207')
-
 
       const q: Query = useQuery(event.req)
 
-      //Must be like 'd4af2b073c0e4d9ea64f85b72a23db0c'
+      // Must be like 'd4af2b073c0e4d9ea64f85b72a23db0c'
       if (!q?.db_id || !Reflect.ownKeys(q).length)
         return {}
 
@@ -70,18 +64,18 @@ export default defineEventHandler(async (event) => {
       // const block = await notion.blocks('85e2177532ce424ebe1b04993ad983de')
       // console.log('block: ', block)
 
-      let childeServices: any = filterByObjectKey(
+      const childeServices: any = filterByObjectKey(
         retrive,
         'db_child_',
-        (result: [key: string, val: any][]) => result.map(([key, val]): { key: string; value: Record<string, any> } => {
+        (result: [key: string, val: any][]) => result.map((value): { key: string; value: Record<string, any> } => {
           // if (val.relation?.database_id)
           //   return val.relation.database_id
 
           // return { key, value: val }
-          return val?.relation?.database_id || ''
+          const resultPropValue = value[1]
+          return resultPropValue?.relation?.database_id || ''
         }),
       )
-
 
       const parentService = filterByObjectKey(
         retrive,
@@ -92,7 +86,7 @@ export default defineEventHandler(async (event) => {
       ) as string[]
 
       const links = await getLinksFromResults(results, parentService[0])
-      console.log('links: ', links);
+      console.log('links: ', links)
 
       // childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
 
@@ -106,10 +100,9 @@ export default defineEventHandler(async (event) => {
   }
   catch (error: unknown) {
     if (error instanceof TypeError) {
-
+      console.error('error: ', error)
     }
     else {
-
       // notionErrorHandler
       errorHandler(error)
       // eslint-disable-next-line no-undef

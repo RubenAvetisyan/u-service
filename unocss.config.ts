@@ -41,7 +41,7 @@ export default defineConfig({
     ['home-menu-second-span', 'text-light-10 text-sm font-medium text-dark-300  group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400'],
     ['model-home-menu-first-span', 'text-light-10 text-sm font-medium text-light-300 group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400'],
     ['model-contents-home-menu-description-container', 'flex mt-1 md:mt-10 pa-4 max-w-xl bg-light-100 dark:bg-dark-100 rounded-xl backdrop-blur-sm opacity-75 text-dark-400 dark:text-light-100 font-medium text-center'],
-    ['index-container', 'relative snap-center h-full justify-between w-full x-overflow-hidden items-center px-2 md:px-4']
+    ['index-container', 'relative snap-center h-full justify-between w-full x-overflow-hidden items-center px-2 md:px-4'],
   ],
   presets: [
     presetUno(),

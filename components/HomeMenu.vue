@@ -19,12 +19,12 @@ const props = defineProps({
   },
   background: {
     type: String,
-    default: ''
+    default: '',
   },
   textMargine: {
     type: String,
-    default: 'mt-6'
-  }
+    default: 'mt-6',
+  },
 })
 
 useHead({
@@ -43,12 +43,13 @@ const onClick = () => {
 </script>
 
 <template>
-  <NuxtLink :to="!!path ? `${baseUrl}${routesPrefix}${path}` : '/'" :class="[bgColor]" class="home-menu-container"
+  <NuxtLink :to="!!path ? `${baseUrl}${routesPrefix}${path}` : '/'" :class="[bgColor]"
+    class="group flex-wrap-reverse bg-opacity-35 objcet-cover cursor-pointer overflow-hidden backdrop-blur-sm relative shadow-lg ring-1 ring-white/5 light:ring-black/5 items-center hover:shadow-md hover:shadow-gray-700 dark:hover:shadow-white hover:light:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-transparent via-gray-500/50 to-transparent"
     @click.stop="onClick">
     <img v-if="background" :src="background" :alt="path" class="home-menu-img" width="180px" height="180px">
-    <div :class="[background ? 'absolute left-0' : '', 'place-content-center w-full h-full']">
+    <div class="place-content-center w-full h-full" :class="[background ? 'absolute inset-0' : '']">
       <div class="relative w-full h-full">
-        <div :class="[textMargine, 'w-full h-full absolute z-10 place-content-center mx-auto items-center']">
+        <div class="w-full h-full absolute z-10 place-content-center mx-auto items-center" :class="[textMargine]">
           <img v-if="icon" class="home-menu-icon" :src="icon" width="120px" height="120px">
           <div class="home-menu-text-container">
             <slot v-if="!$slots['first-line'] && !$slots['secont-line']" />
@@ -62,12 +63,9 @@ const onClick = () => {
         </div>
 
         <div v-if="background" class="home-menu-background-container">
-          <div class="home-menu-background">
-          </div>
+          <div class="home-menu-background" />
         </div>
       </div>
-
     </div>
-
   </NuxtLink>
 </template>

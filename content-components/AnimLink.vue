@@ -1,10 +1,12 @@
-<script steup>
-defineProps({
-  href: {
+<script setup>
+const props = defineProps({
+  aHref: {
     type: String,
-    default: '#'
-  }
+    default: () => '#',
+  },
 })
+
+const href = computed(() => props.aHref)
 </script>
 
 <template>

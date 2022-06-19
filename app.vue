@@ -1,7 +1,7 @@
 <script setup>
 /* eslint-disable no-console */
 import { storeToRefs } from 'pinia'
-import DarkToggle from './components/DarkToggle.vue';
+import DarkToggle from './components/DarkToggle.vue'
 
 // const nuxtApp = useNuxtApp()
 
@@ -38,12 +38,12 @@ const params = {}
 
 const { pending, data: notion, refresh, error } = await useLazyAsyncData(name || 'notion', () => notionFetch(
   url.value, {
-  lazy: true,
+    lazy: true,
   // transform: (response) => {
-  //   
+  //
   //   return response
   // },
-}))
+  }))
 // if (!useObjcectLength(links.value) && process.server) {
 
 if (error.value)
@@ -55,15 +55,13 @@ if (notion?.value) {
 
   useSetLinks(notion.value, url.value)
 
-
   notionStore.setChildeServices(notion.value.childeServices, notion.value.links)
 }
 
 // When query string changes, refresh
 watch(() => route.path, async (newPath, oldPath) => {
   try {
-    console.log('route.path: ', route.path);
-
+    console.log('route.path: ', route.path)
 
     const isSame = newPath === oldPath || newPath === '/' || !!services
 
@@ -84,21 +82,21 @@ watch(() => route.path, async (newPath, oldPath) => {
 
     // params = notionStore.setQuery()
 
-    // When route.path string changes, fetching for new data 
+    // When route.path string changes, fetching for new data
     services = await notionFetch(
       url.value, {
         lazy: false,
-    })
+      })
 
     isPending.value = pending
 
     await useSetLinks(services, url.value)
 
-    if (!services?.childeServices?.length) return
+    if (!services?.childeServices?.length)
+      return
     notionStore.setChildeServices([services.childeServices], services.links)
 
     services = null
-
   }
   catch (error) {
 
@@ -127,11 +125,13 @@ const rightNavigation = [
 ]
 
 const rn = computed(() => {
-  return !device.isMobile ? rightNavigation : [{
-    path: '',
-    name: 'Ծառայություններ',
-    onClick,
-  }]
+  return !device.isMobile
+    ? rightNavigation
+    : [{
+        path: '',
+        name: 'Ծառայություններ',
+        onClick,
+      }]
 })
 const generatedKey = str => useGeneratedKey(str)
 
@@ -157,7 +157,8 @@ useHead({
 
 const color = useColorMode()
 
-if (!color.value) color.preference = 'light'
+if (!color.value)
+  color.preference = 'light'
 const logo = computed(() => {
   const mode = color.value
   return mode === 'light' || mode === 'system' ? '/U-Service-light-full.png' : '/U-Service-full.png'

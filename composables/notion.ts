@@ -4,7 +4,7 @@ import type { NotionValue } from './helpers'
 
 type Obj = Record<string, any>
 
-const lastUrl = ref('')
+// const lastUrl = ref('')
 export const notionFetch = (url: string, fetchOptions: any = {}) => {
   // eslint-disable-next-line no-undef
 
@@ -24,7 +24,7 @@ export const notionFetch = (url: string, fetchOptions: any = {}) => {
 
 interface StateReturn {
   notionValue: Record<string, any>
-  childeServices: { [key: string]: string[] }
+  childeServices: Record<string, string[]>
   services: Obj
   servicesByPath: Obj
 }
@@ -41,9 +41,8 @@ export const useNotionStore = defineStore('notion', {
   },
   actions: {
     setMainServices(nvl: NotionValue) {
-      if (!useObjcectLength(this.notionValue.links) && nvl) {
+      if (!useObjcectLength(this.notionValue.links) && nvl)
         this.notionValue.links = nvl.links
-      }
 
       this.splitName(nvl.links)
     },
@@ -58,11 +57,9 @@ export const useNotionStore = defineStore('notion', {
       })
       return this.services
     },
-    setChildeServices(childeServiceIds: string[] = [], links: { [key: string]: any }) {
-
-
-//       if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to be typeof string[],but
-// got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
+    setChildeServices(childeServiceIds: string[] = [], links: Record<string, any>) {
+      //       if (!childeServiceIds?.length) return useErrorHandler(`expected prop: childeServiceIds to be typeof string[],but
+      // got type: ${typeof childeServiceIds} and value: ${childeServiceIds}`)
 
       if (!links)
         return
@@ -75,16 +72,16 @@ export const useNotionStore = defineStore('notion', {
       this.childeServices = { [key]: [...childeServices.value] }
     },
     setQuery(key?: string) {
-      const name = useGetLastParam('model') || ''
+      // const name = useGetLastParam('model') || ''
       const queryKey = key ? `?${key}=` : '?db_id='
       const path = useGetLastParam('model') || ''
       const childeServices = Object.entries(this.childeServices).find(([key]) => key.includes(path))
 
-      if (!childeServices?.length) return ''
+      if (!childeServices?.length)
+        return ''
       return `${queryKey}${childeServices[1].join(queryKey)}`
     },
     addServices(nvl: NotionValue) {
-
       try {
         if (!nvl)
           return
@@ -98,9 +95,9 @@ export const useNotionStore = defineStore('notion', {
         return this.services
       }
       catch (error: any) {
-        if (!error?.value) {
+        if (!error?.value)
           return useErrorHandler(error)
-        }
+
         throwError(new Error(error.value))
       }
     },
@@ -136,30 +133,27 @@ export const useNotionStore = defineStore('notion', {
     },
     getServiceByPath(state) {
       return (path: string) => {
-
-
-        if (!state.servicesByPath[path]) {
+        if (!state.servicesByPath[path])
 
           return undefined
-        }
 
         return this.servicesByPath[path]
       }
     },
-    getTitle() {
-      this.getServiceByPath.name
-    }
+    // getTitle() {
+    //   this.getServiceByPath.name
+    // },
   },
 })
 
-function setLink(match: string, service: Obj, links: Obj): void {
-  if (!service || !links)
-    return
-  if (!links[service?.parentServiceId]?.services[match])
-    setLink(match, service?.services, links?.services)
-  else
-    links[service.parentServiceId].services[match] = service
-}
+// function setLink(match: string, service: Obj, links: Obj): void {
+//   if (!service || !links)
+//     return
+//   if (!links[service?.parentServiceId]?.services[match])
+//     setLink(match, service?.services, links?.services)
+//   else
+//     links[service.parentServiceId].services[match] = service
+// }
 
 function setServiceByPath(serviceKey: string, path: string, service: Obj, links: Obj): void {
   if (!service || !links)
@@ -167,19 +161,18 @@ function setServiceByPath(serviceKey: string, path: string, service: Obj, links:
 
   const key = path.replace(/\//g, '')
 
-  if (!links[key]) links[key] = service
+  if (!links[key])
+    links[key] = service
 
-  let childServicePath = ''
+  // const childServicePath = ''
 
-  Object.values(links).forEach(link => {
-    if (link.childPaths.includes(path)) {
+  Object.values(links).forEach((link) => {
+    if (link.childPaths.includes(path))
       link.services[serviceKey] = service
-      childServicePath
-    }
+      // childServicePath
   })
 
   // links[key]
-
 
   // interface Obj {
   //   [key: string]: any

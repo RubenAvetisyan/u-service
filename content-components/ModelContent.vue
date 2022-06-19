@@ -2,20 +2,20 @@
 const props = defineProps({
   imgUrl: {
     type: String,
-    default: ''
+    default: '',
   },
   lastItem: {
     type: Boolean,
-    default: false
+    default: false,
   },
   itemKey: {
     type: Number,
-    default: 0
+    default: 0,
   },
   itemClass: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const scrollDown = useChevronScrollDown()
@@ -23,11 +23,11 @@ const scrollDown = useChevronScrollDown()
 
 <template>
   <div :style="`background-image: url('${imgUrl}');`" class="model-contents-container" :class="[itemClass]">
-    <div class="model-contents-home-menu-container">
-      <slot name="btn"></slot>
+    <div class="relative model-contents-home-menu-container">
+      <slot name="btn" />
     </div>
 
-    <slot name="description"></slot>
+    <slot name="description" />
 
     <ContentChevronDown :key="`chevron-${itemKey}`" class="model-content-chevron"
       :fn="scrollDown(lastItem ? '#main-content' : `#content-${itemKey + 1}`)"

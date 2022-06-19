@@ -12,7 +12,7 @@ const notionStore = useNotionStore()
 
 const getService = notionStore.getServiceByPath
 
-let link = ref(null)
+const link = ref(null)
 
 const generatedKey = str => useGeneratedKey(str)
 
@@ -21,8 +21,6 @@ const linkRels = useLinkMeta()
 useHead({
   link: linkRels.value,
 })
-
-
 
 const isModal = ref(false)
 
@@ -35,12 +33,13 @@ const isLinks = (obj) => {
 }
 
 let isLinkServices = null
-let linkServicesLength = ref(0)
+const linkServicesLength = ref(0)
 
 // const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
 
 watch(() => route.path, async (n, o) => {
-  if (n === '/') return
+  if (n === '/')
+    return
   path = useGetLastParam('model')
 
   if (path) {
@@ -51,11 +50,11 @@ watch(() => route.path, async (n, o) => {
   isLinkServices = computed(() => {
     const result = isLinks(link.value?.services || {})
 
-
     return result
   })
 
-  if (isLinkServices.value) linkServicesLength.value = useObjcectLength(link.value?.services)
+  if (isLinkServices.value)
+    linkServicesLength.value = useObjcectLength(link.value?.services)
 }, { immediate: true })
 </script>
 
@@ -79,7 +78,7 @@ watch(() => route.path, async (n, o) => {
           Առկա ծառայություններ
         </content-btn>
       </div>
-      <div class="h-full"></div>
+      <div class="h-full" />
 
       <content-chevron-down v-if="isLinkServices" class="model-content-chevron" :fn="scrollDown('#contents')" />
     </div>
@@ -88,10 +87,11 @@ watch(() => route.path, async (n, o) => {
       <content-model-content
         v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', description = '' }, id, i) in link.services"
         :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :item-class="itemClass" :item-key="i"
-        :img-url="imgUrl" :last-item="i + 1 >= linkServicesLength" class="model-contents-container">
+        :img-url="imgUrl" :last-item="i + 1 >= linkServicesLength" class="relative model-contents-container">
         <template #btn>
           <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
-            :path="`/${path}${subPath}`" textMargine='mt-3' class="model-contents-home-menu">
+            :path="`/${path}${subPath}`" text-margine="mt-3"
+            class="flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center">
             <span class="model-home-menu-first-span"> {{ name }}</span>
           </r-home-menu>
         </template>

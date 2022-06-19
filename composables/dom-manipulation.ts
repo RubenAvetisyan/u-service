@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { TypeReferenceType } from "typescript"
+// import { TypeReferenceType } from 'typescript'
 
 /* eslint-disable semi */
 const scrollIntoParentNextSiblingElement = (selector: any): void => {
@@ -9,7 +9,8 @@ const scrollIntoParentNextSiblingElement = (selector: any): void => {
 
     if (!element) {
       throw new ReferenceError(`element with selector '${selector}' not found`)
-    } else {
+    }
+    else {
       element.scrollIntoView({
         behavior: 'smooth',
       })
