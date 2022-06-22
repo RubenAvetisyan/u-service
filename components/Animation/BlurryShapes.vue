@@ -1,52 +1,13 @@
-<script setup>
-const translateTop = ref('translate-y-0')
-const translateLeft = ref('translate-x-0')
-const translateRight = ref('translate-x-0')
-const num = ref(0)
-
-let timer = null
-let repete = (ms) => {
-  timer = null
-  timer = setTimeout((...args) => {
-    const [repetetimeout, milliseconds] = args
-    if (!repete || !timer)
-      return
-
-    if (num.value === 0) {
-      num.value = 48
-      translateTop.value = '-translate-y-48'
-      translateRight.value = 'translate-x-48'
-      translateLeft.value = '-translate-x-48'
-    }
-    else {
-      num.value = 0
-      translateTop.value = 'translate-y-0'
-      translateRight.value = 'translate-x-0'
-      translateLeft.value = 'translate-x-0'
-    }
-
-    repetetimeout(milliseconds)
-  }, ms, repete, ms)
-}
-
-repete(2000)
-
-onDeactivated(() => {
-  timer = null
-  repete = null
-})
-
-onBeforeUnmount(() => {
-  timer = null
-  repete = null
-})
-</script>
-
 <template>
   <div class="w-full max-w-lg">
-    <div class="anim-blob top-0 -left-4 bg-slate-400 transition-blurry-shape" :class="[translateLeft]" />
-    <div class="anim-blob top-0 -right-4 bg-teal-300 transition-blurry-shape" :class="[translateRight]" />
-    <div class="anim-blob -bottom-8 left-20 bg-blue-300 transition-blurry-shape" :class="[translateTop]" />
+    <div class="relative animate-spin animate-duration-20000">
+      <div
+        class="absolute w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 top-0 -left-4 bg-slate-400 animate-shape-left" />
+      <div
+        class="absolute w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 top-0 -right-4 bg-teal-300 animate-shape-right" />
+      <div
+        class="absolute w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 -bottom-8 left-20 bg-blue-300 animate-shape-top" />
+    </div>
     <div class=" m-8 relative space-y-4">
       <slot />
     </div>

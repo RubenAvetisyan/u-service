@@ -11,37 +11,7 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['btn-chevron-container', 'flex mx-auto w-10 items-center mx-auto justify-center content-center'],
-    ['btn-chevron', 'flex h-10 rounded-full cursor-pointer bg-dark-600 backdrop-blur-sm opacity-75 mx-auto relative h-10 w-10 content-center items-center justify-center align-middle text-center'],
-    ['btn-chevron-svg', 'bi bi-chevron-down animate-bounce text-stroke-light-100 text-light-100 align-middle text-center relative mt-2'],
-    ['btn-dark', 'bg-opacity-80 bg-white dark:bg-[#181a1f] text-[#393c41] dark:text-white'],
-    ['btn-light', 'bg-opacity-63 dark:bg-white bg-[#181a1f] dark:text-[#393c41] text-white'],
-    ['btn-link', 'inline-block rounded-2xl text-center tracking-wider font-medium uppercase flex justify-center items-center text-3 w-64 h-10'],
-    ['anim-link', 'transition border-b hover:border-b-2 border-light-100 text-light-100 light:border-[#5c5d61] light:text-[#5c5d61] hover:border-blue-300 hover:text-blue-300 light:hover:border-light-300 light:hover:text-light-300'],
     ['btn', 'px-4 py-1 rounded inline-block bg-teal-600 text-white cursor-pointer hover:bg-teal-700 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
-    ['icon-btn', 'inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600'],
-    ['anim-blob', 'absolute w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70'],
-    ['transition-blurry-shape', 'motion-reduce:transition transition-transform duration-2000 ease-in-out'],
-    ['model', 'h-screen justify-between pb-13.75 items-center'],
-    ['model-nuxt-page', 'w-full mx-auto justify-center items-center'],
-    ['model-main-content', 'mx-auto text-center items-center justify-center'],
-    ['model-main-content-h2', 'max-w-lg mx-auto font-normal backdrop-blur-sm rounded-lg tracking-wider text-light-100 light:text-dark-100 text-3.5 pb-2'],
-    ['model-content-btn-container', 'flex flex-wrap mx-auto max-w-sm md:max-w-xl items-center justify-around space-x-3.25 md:space-x-6.25 space-y-5.5 md:space-y-0 mt-4 h-40 md:h-20'],
-    ['model-content-chevron', 'absolute bottom-[1rem] inset-x-0'],
-    ['model-contents-container', 'snap-start h-full md:h-screen w-screen relative bg-cover bg-fixed bg-center flex flex-col text-center items-center justify-center px-4 place-content-center'],
-    ['model-contents-home-menu-container', 'flex mx-auto items-center justify-center h-10 text-center content-center mb-8'],
-    ['model-contents-home-menu', 'flex mx-auto text-light-blue-100 hover:text-light-100 bg-opacity-50 h-20 w-80 ma-2 rounded-xl align-center justify-center'],
-    ['home-menu-container', 'group flex-wrap-reverse bg-opacity-35 objcet-cover cursor-pointer overflow-hidden backdrop-blur-sm relative shadow-lg ring-1 ring-white/5 light:ring-black/5 items-center hover:shadow-md hover:shadow-gray-700 dark:hover:shadow-white hover:light:bg-slate-800 hover:dark:highlight-white/5 hover:bg-gradient-to-r from-transparent via-gray-500/50 to-transparent'],
-    ['home-menu-background-container', 'absolute z-0 flex top-0 left-0 place-content-center mx-auto items-center justify-center w-full h-full'],
-    ['home-menu-background', 'rounded-full h-[9rem] w-[9rem] bg-light-50 group-hover:bg-light-800 dark:bg-dark-50  opacity-50 dark:opacity-70 transition-all ease-in-out duration-150'],
-    ['home-menu-img', 'rounded-full object-cover h-full w-full backdrop-blur-10 opacity-70 dark:opacity-50 group-hover:opacity-50 transition-all ease-in-out duration-150'],
-    ['home-menu-icon', 'w-6 h-6 shadow-lg rounded-full mx-auto transition duration-800 delay-75 ease-in-out group-hover:scale-125 group-hover:animate-bounce group-hover:grayscale shadow-lg shadow-[#0080BF] group-hover:invert'],
-    ['home-menu-text-container', 'flex flex-col tracking-tight text-center place-content-center align-middle pa-5 w-full justify-center content-center items-center transition duration-600 ease-in-out group-hover:scale-112'],
-    ['home-menu-first-span', 'text-sm font-medium font-bold text-dark-200 group-hover:text-light-500 group-hover:dark:text-dark-500 dark:text-light-300'],
-    ['home-menu-second-span', 'text-light-100 text-sm font-medium text-dark-300  group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400'],
-    ['model-home-menu-first-span', 'text-light-100 text-sm font-medium text-light-300 group-hover:text-light-600 group-hover:dark:text-dark-600 dark:text-light-400'],
-    ['model-contents-home-menu-description-container', 'flex mt-1 md:mt-10 pa-4 max-w-xl bg-light-100 dark:bg-dark-100 rounded-xl backdrop-blur-sm opacity-75 text-dark-400 dark:text-light-100 font-medium text-center'],
-    ['index-container', 'relative snap-center h-full justify-between w-full x-overflow-hidden items-center px-2 md:px-4'],
   ],
   presets: [
     presetUno(),
@@ -62,4 +32,31 @@ export default defineConfig({
     transformerDirectives(),
     transformerVariantGroup(),
   ],
+  rules: [
+    [/^animate-(.*)$/, ([_, match], { theme }) => {
+      if (match.startsWith('shape')) {
+        return {
+          animation: match + ' ' + theme.extend.animation.shape
+        }
+      }
+    }],
+  ],
+  theme: {
+    extend: {
+      animation: {
+        'shape': '2s ease-in-out infinite alternate both',
+      } as { [key: string]: string },
+    }
+  }
 })
+
+// {
+//   from: {
+//     opacity: '0',
+//       transform: 'translate3d(-100 %, 0, 0)',
+//         },
+//   to: {
+//     opacity: '1',
+//       transform: 'translate3d(0, 0, 0)',
+//         }
+// }
