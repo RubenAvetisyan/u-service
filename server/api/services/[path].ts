@@ -98,9 +98,9 @@ export default defineEventHandler(async (event) => {
 
         // childeServices = childeServices && childeServices[0]?.length ? childeServices[0][1].relation.database_id : []
 
-        cache.setCache(path, links)
-        cache.setCache('childe-services', childeServices)
-        console.log('cache size: ', cache.size(), 'last time', Date.now().toLocaleString())
+        // cache.setCache(path, links)
+        // cache.setCache('childe-services', childeServices)
+        // console.log('cache size: ', cache.size(), 'last time', Date.now().toLocaleString())
 
         return { links, childeServices }
       }
