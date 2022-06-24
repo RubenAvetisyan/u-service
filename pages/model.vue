@@ -35,7 +35,7 @@ const isLinks = (obj) => {
 let isLinkServices = null
 const linkServicesLength = ref(0)
 
-// const isLastItem = (i = 0, obj = {}) => i + 1 >= useObjcectLength(obj)
+// const isLastItem = (i = 0, obj = {}) => (i + 1) >= useObjcectLength(obj)
 
 watch(() => route.path, async (n, o) => {
   if (n === '/')
@@ -90,7 +90,7 @@ watch(() => route.path, async (n, o) => {
       <content-model-content
         v-for="({ name = '', imgUrl = '', itemClass = '', path: subPath = '/', description = '' }, id, i) in link.services"
         :id="`content-${i}`" :key="generatedKey(`${name}-${id}`)" :item-class="itemClass" :item-key="i"
-        :img-url="imgUrl" :last-item="i + 1 >= linkServicesLength"
+        :img-url="imgUrl" :last-item="(i + 1) >= linkServicesLength"
         class="relative snap-start h-full md:h-screen w-screen relative bg-cover bg-fixed bg-center flex flex-col text-center items-center justify-center px-4 place-content-center">
         <template #btn>
           <r-home-menu :key="`service-block-${path.replace(/\//g, '')}`" color="bg-[#181a1f]" routes-prefix="model"
