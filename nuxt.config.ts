@@ -10,6 +10,15 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxt/devtools',
   ],
+  runtimeConfig: {
+    NOTION_API_KEY: process.env.NOTION_API,
+    NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
+    NOTION_DATABASE_MAIN_SECTIONS_ID: process.env.NOTION_DATABASE_MAIN_SECTIONS_ID,
+    NOTION_MAIN_PAGE_ID: process.env.NOTION_MAIN_PAGE_ID,
+    public: {
+      baseUrl: '/',
+    }
+  },
   experimental: {
     // when using generate, payload js assets included in sw precache manifest
     // but missing on offline, disabling extraction it until fixed
@@ -18,6 +27,7 @@ export default defineNuxtConfig({
   },
   css: [
     '@unocss/reset/tailwind.css',
+    '@/assets/styles/main.css',
   ],
   colorMode: {
     classSuffix: '',
@@ -33,6 +43,20 @@ export default defineNuxtConfig({
       routes: ['/'],
       ignore: ['/hi'],
     },
+  },
+  components: {
+    dirs: [
+      {
+        path: '~/components',
+        extensions: ['vue'],
+        prefix: 'r',
+      },
+      {
+        path: '~/content-components',
+        extensions: ['vue'],
+        prefix: 'content',
+      },
+    ],
   },
   app: {
     head: {

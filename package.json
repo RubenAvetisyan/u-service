@@ -11,6 +11,9 @@
     "generate": "nuxi generate",
     "start:generate": "npx serve .output/public"
   },
+  "dependencies": {
+    "@notionhq/client": "^1.0.4"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.3",
     "@iconify-json/carbon": "^1.1.16",
