@@ -18,7 +18,13 @@ export default defineNuxtConfig({
   },
   css: [
     '@unocss/reset/tailwind.css',
+    '~/assets/css/index.css'
   ],
+  unocss: {
+    preflight: true,
+    attributify: true,
+    icons: true,
+  },
   colorMode: {
     classSuffix: '',
   },
